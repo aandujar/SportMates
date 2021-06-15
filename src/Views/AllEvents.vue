@@ -110,7 +110,7 @@ export default {
           params: {
             userId: this.getUserId,
             page: this.page - 1,
-            size: 20,
+            size: 16,
             sort: "id,ASC",
           },
           data: this.filter,

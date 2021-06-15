@@ -1,7 +1,7 @@
 <template>
   <div class="main">
-    <Toolbar class="main__toolbar" />
-    <div class="main__content">
+    <Toolbar ref="toolbar" class="main__toolbar" />
+    <div class="main__content" @click="closeMenu">
       <router-view />
     </div>
   </div>
@@ -18,6 +18,11 @@ export default {
   },
   components: {
     Toolbar,
+  },
+  methods: {
+    closeMenu() {
+      this.$refs.toolbar.closeMenu();
+    },
   },
 };
 </script>

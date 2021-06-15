@@ -15,9 +15,9 @@
         </div></v-row
       >
       <v-row cols="12" xs="12"
-        ><div class="flex-row flex-row--wrapped flex-row--aligned-start">
-          <v-icon medium color="primary"> mdi-map-marker-outline </v-icon>
-          <div>{{ getDirection }}</div>
+        ><div class="flex-row flex-row--content-start">
+         <v-icon medium color="primary"> mdi-map-marker-outline </v-icon>
+         <div class="flex-row flex-row--wrapped">{{ getDirection }}</div>
         </div></v-row
       >
       <v-row cols="12" xs="12"
@@ -109,8 +109,8 @@ export default {
 
 <style lang="scss" scoped>
 .event {
-  height: 320px;
-  width: 270px;
+  height: 400px;
+  width: 330px;
   background-color: white;
 
   &:hover {

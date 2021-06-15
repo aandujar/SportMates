@@ -23,11 +23,10 @@ export default {
   },
   created() {
     const user = localStorage.getItem("user");
-    console.log(this.$route);
     if (user) {
       this.$store.commit("user/SET_USER", JSON.parse(user));
       if (this.$route.path === "/") {
-        this.$router.push("/main");
+        this.$router.push("/event");
       }
     } else {
       this.$router.push("/");

@@ -10,16 +10,31 @@ const routes = [
     component: () => import('@/Views/InitialPage')
   },
   {
-    path: '/main',
+    path: '/event',
     name: 'Main',
-    redirect: { name: 'Event' },
+    redirect: { name: 'AllEvents' },
     component: () => import('@/Views/Main'),
     children: [
       {
-        path: 'event',
-        name: 'Event',
-        component: () => import('@/Views/Events')
-      }
+        path: 'all',
+        name: 'AllEvents',
+        component: () => import('@/Views/AllEvents')
+      },
+      {
+        path: 'own',
+        name: 'OwnEvents',
+        component: () => import('@/Views/OwnEvents')
+      },
+      {
+        path: 'inscripted',
+        name: 'InscriptedEvents',
+        component: () => import('@/Views/InscriptedEvents')
+      },
+      {
+        path: 'profile',
+        name: 'Profile',
+        component: () => import('@/Views/Profile')
+      },
     ]
   },
  /* {

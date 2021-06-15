@@ -28,7 +28,7 @@ export default {
       this.showLogin = !this.showLogin;
     },
     goToEvents() {
-      this.$router.push("/main");
+      this.$router.push("/event");
     }
   },
 };
