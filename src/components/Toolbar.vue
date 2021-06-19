@@ -3,17 +3,9 @@
     class="toolbar flex-row flex-row--space-between flex-row--aligned pr-4"
     @click.prevent="closeMenu"
   >
-    <!-- hamburguer icon -->
-    <!--  <div class="toolbar__hamburguer" @click="showIcons">-->
-    <!-- <font-awesome-icon icon="bars" color="black" class="icon icon--small" />-->
-    <!--  </div>-->
-    <!-- logo -->
     <div class="flex-row--content-end">
       <v-img class="toolbar__logo" :src="require(`@/assets/logo.png`)"></v-img>
     </div>
-    <!-- rigth items -->
-    <!--  <ToolbarIcons class="toolbar__icons-rigth" />-->
-
     <div class="toolbar__image pointer" v-on:click.stop="toggleMenu">
       <v-img
         height="100%"
@@ -35,7 +27,7 @@
       >
         <v-icon class="mr-2" medium color="primary"
           >mdi-folder-open-outline</v-icon
-        >Inicio
+        >{{ $text.main }}
       </div>
       <div
         v-if="!isInInscriptedEventsPage"
@@ -44,7 +36,7 @@
       >
         <v-icon class="mr-2" medium color="primary"
           >mdi-folder-open-outline</v-icon
-        >Inscripciones
+        >{{ $text.inscriptions }}
       </div>
       <div
         v-if="!isInOwnEventsPage"
@@ -53,20 +45,20 @@
       >
         <v-icon class="mr-2" medium color="primary"
           >mdi-folder-open-outline</v-icon
-        >Mis eventos
+        >{{ $text.myEvents }}
       </div>
       <div
         class="toolbar__menu__item pointer flex-row flex-row--aligned pa-2"
         @click="goTo('profile')"
       >
-        <v-icon class="mr-2" medium color="primary"> mdi-account </v-icon>Perfil
+        <v-icon class="mr-2" medium color="primary"> mdi-account </v-icon>{{ $text.profile }}
       </div>
       <div
         class="toolbar__menu__item pointer flex-row flex-row--aligned pa-2"
         @click="logout"
       >
         <v-icon class="mr-2" medium color="primary"> mdi-power-standby</v-icon>
-        Cerrar sesión
+        {{ $text.signOff }}
       </div>
     </div>
   </div>
@@ -119,12 +111,12 @@ export default {
 
 <style lang="scss" scoped>
 .toolbar {
-  background-color: #3f51b5;
+  background-color: $blue-primary;
   position: fixed;
   height: 70px;
   z-index: 90;
 
-  &__logo {
+ &__logo {
     height: 200px;
     width: 400px;
   }
@@ -135,6 +127,20 @@ export default {
     border-radius: 50%;
     background-color: white;
   }
+  
+  @media (max-width: 600px) {
+   &__logo {
+    height: 200px;
+    width: 200px;
+  }
+
+  &__image {
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    background-color: white;
+  }
+}
 
   &__menu {
     width: 200px;

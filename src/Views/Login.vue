@@ -1,12 +1,12 @@
 <template>
   <div class="login center-items flex-column">
     <v-col cols="12" xs="12">
-      <h3 class="text text--big text--bold">Login</h3>
+      <h3 class="text text--big text--bold">{{ $text.login }}</h3>
     </v-col>
     <v-col cols="12" sm="12" md="6">
       <v-text-field
         prepend-inner-icon="mdi-account"
-        label="Usuario"
+        :label="$text.user"
         v-model="username"
         @keyup.enter="login"
       ></v-text-field>
@@ -14,12 +14,10 @@
     <v-col cols="12" sm="12" md="6">
       <v-text-field
         prepend-inner-icon="mdi-lock"
-        label="Contraseña"
+        :label="$text.password"
         v-model="password"
-        :type="showPassword ? 'text' : 'password'"
-        :append-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+        type="password"
         @keyup.enter="login"
-        @click:append="() => (showPassword = !showPassword)"
       ></v-text-field>
     </v-col>
     <transition name="slide-fade">
@@ -37,12 +35,12 @@
         :loading="user.status === 'loading'"
         @click="login"
       >
-        Acceder
+        {{ $text.access }}
       </v-btn>
     </v-col>
     <v-col cols="12" xs="12"
       ><div class="pointer-underlined" @click="$emit('change')">
-        ¿Aun no estás registrado? Haz clic aquí
+        {{ $text.loginRegisterMessage }}
       </div></v-col
     >
   </div>
@@ -59,8 +57,7 @@ export default {
     return {
       username: "",
       password: "",
-      errorMessage: "",
-      showPassword: false,
+      errorMessage: ""
     };
   },
   validations: {
@@ -78,7 +75,7 @@ export default {
     },
     login() {
       if (this.$v.$invalid) {
-        this.errorMessage = "Debes introducir usuario y contraseña";
+        this.errorMessage = this.$text.mustEnterUserAndPassword;
         this.hideErrorMessage();
       } else {
         this.$store
@@ -88,7 +85,7 @@ export default {
           })
           .then(() => this.$emit("logged"))
           .catch(() => {
-            this.errorMessage = "Usuario o contraseña incorrectos";
+            this.errorMessage = this.$text.invalidUserOrPassword;
             this.hideErrorMessage();
           });
       }

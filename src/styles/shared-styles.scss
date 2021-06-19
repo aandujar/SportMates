@@ -53,6 +53,7 @@
     &--content-start {
       justify-content: flex-start;
     }
+    
 }   
  
 .flex-column {
@@ -159,4 +160,13 @@
 
   .w-100 {
     width: 100%;
+  }
+
+
+  .align-right {
+    margin-left: auto;
+  }
+
+  .break-word {
+    word-break: break-word;
   }

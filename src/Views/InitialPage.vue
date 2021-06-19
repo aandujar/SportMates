@@ -28,6 +28,7 @@ export default {
       this.showLogin = !this.showLogin;
     },
     goToEvents() {
+      this.$store.dispatch("event/getSports");
       this.$router.push("/event");
     }
   },

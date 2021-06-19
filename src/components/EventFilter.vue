@@ -1,8 +1,12 @@
 <template>
-  <div class="event-filter flex-column pa-4">
-    <div
-      class="flex-row flex-row--wrapped flex-row--content-end w-100 mb-2"
-    >
+  <div
+    class="event-filter flex-column pa-4"
+    :class="{
+      'event-filter--big': showFilter,
+      'event-filter--small': !showFilter,
+    }"
+  >
+    <div class="flex-row flex-row--wrapped flex-row--content-end w-100 mb-2">
       <transition name="fade">
         <v-icon
           v-show="filterApplied"
@@ -23,158 +27,131 @@
       </transition>
     </div>
     <div
-      class="flex-row flex-row--wrapped"
-      id="filter"
-      :class="{ 'show-filter': showFilter, 'hide-filter': !showFilter }"
+      class="event-filter__content"
+      :class="{
+        'event-filter__content--show': showFilter,
+        'event-filter__content--hide': !showFilter,
+      }"
     >
-      <!-- sport -->
-      <v-autocomplete
-        :items="combo.sport"
-        v-model="filter.sport"
-        outlined
-        dense
-        label="Deportes"
-        chips
-        clearable
-        multiple
-        item-text="name"
-        item-value="code"
-        @change="getEvents"
-      ></v-autocomplete>
-      <!-- country -->
-      <v-autocomplete
-        :items="combo.country"
-        v-model="filter.country"
-        outlined
-        dense
-        label="Pais"
-        chips
-        clearable
-        multiple
-        item-text="name"
-        item-value="code"
-        @change="countrySelected"
-      ></v-autocomplete>
-      <!-- province -->
-      <v-autocomplete
-        :items="getProvinces"
-        v-model="filter.province"
-        outlined
-        dense
-        label="Provincia"
-        chips
-        clearable
-        multiple
-        item-text="name"
-        item-value="code"
-        @change="provinceSelected"
-      ></v-autocomplete>
-      <!-- city -->
-      <v-autocomplete
-        :items="getCities"
-        v-model="filter.city"
-        outlined
-        dense
-        label="Ciudad"
-        chips
-        clearable
-        multiple
-        item-text="name"
-        item-value="code"
-        @change="getEvents"
-      ></v-autocomplete>
-      <!-- start date -->
-      <v-menu
-        ref="menuStartDate"
-        v-model="menuStartDate"
-        :close-on-content-click="false"
-        transition="scale-transition"
-        offset-y
-        min-width="auto"
-      >
-        <template v-slot:activator="{ on, attrs }">
-          <v-text-field
-            v-model="filter.startDate"
-            label="Día de inicio"
-            prepend-icon="mdi-calendar"
-            readonly
-            v-bind="attrs"
-            v-on="on"
-          ></v-text-field>
-        </template>
-        <v-date-picker
-          v-model="filter.startDate"
-          :active-picker.sync="activeStartDatePicker"
-          :min="getMinimumStartDate"
-          @change="saveStartDate"
-        ></v-date-picker>
-      </v-menu>
-      <!-- finish date -->
-      <v-menu
-        ref="menuFinishDate"
-        v-model="menuFinishDate"
-        :close-on-content-click="false"
-        transition="scale-transition"
-        offset-y
-        min-width="auto"
-      >
-        <template v-slot:activator="{ on, attrs }">
-          <v-text-field
-            v-model="filter.finishDate"
-            label="Día de fin"
-            prepend-icon="mdi-calendar"
-            readonly
-            v-bind="attrs"
-            v-on="on"
-          ></v-text-field>
-        </template>
-        <v-date-picker
-          v-model="filter.finishDate"
-          :active-picker.sync="activeFinishDatePicker"
-          @change="saveFinishDate"
-        ></v-date-picker>
-      </v-menu>
+      <!-- main data -->
+      <div class="flex-row flex-row--wrapped">
+        <!-- sport -->
+        <v-autocomplete
+          class="mr-2"
+          :items="sports"
+          v-model="filter.sport"
+          :label="$text.sports"
+          clearable
+          item-text="name"
+          item-value="code"
+          @change="getEvents"
+        ></v-autocomplete>
+        <!-- country -->
+        <v-text-field
+          class="mr-2"
+          :label="$text.country"
+          v-model="filter.country"
+          v-on:input="debounce"
+        ></v-text-field>
+        <!-- province -->
+        <v-text-field
+          class="mr-2"
+          :label="$text.province"
+          v-model="filter.province"
+          @input="debounce"
+        ></v-text-field>
+        <!-- city -->
+        <v-text-field
+          class="mr-2"
+          :label="$text.city"
+          v-model="filter.city"
+          @input="debounce"
+        ></v-text-field>
+        <!-- postalCode -->
+        <v-text-field
+          class="mr-2"
+          :label="$text.postalCode"
+          v-model="filter.postalCode"
+          @input="debounce"
+        ></v-text-field>
+        <!-- direction -->
+        <v-text-field
+          class="mr-2"
+          :label="$text.address"
+          v-model="filter.direction"
+          @input="debounce"
+        ></v-text-field>
+      </div>
+      <!-- temporal data -->
+      <div class="flex-row flex-row--wrapped">
+        <!-- start date -->
+        <DatePicker
+          ref="datePicker"
+          :minDate="$getCurrentDate()"
+          clearable
+          v-model="startDate"
+        />
+        <!-- start hour -->
+        <TimePicker
+          ref="timePicker"
+          v-model="startTime"
+          :minTime="$getMinTime(startDate)"
+          :disabled="startDate.length === 0"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import DatePicker from "@/components/DatePicker";
+import TimePicker from "@/components/TimePicker";
 import moment from "moment";
+import _ from "lodash";
 
 export default {
   name: "EventFilter",
-  props: { combo: { Type: Object, required: true } },
+  components: {
+    DatePicker,
+    TimePicker,
+  },
+  props: { sports: { Type: Array, required: true } },
   data() {
     return {
-      activeStartDatePicker: null,
-      activeFinishDatePicker: null,
-      menuStartDate: false,
-      menuFinishDate: false,
+      startDate: "",
+      startTime: "",
       showFilter: false,
       filter: {
-        sport: [],
-        country: [],
-        province: [],
-        city: [],
+        sport: "",
+        country: "",
+        province: "",
+        city: "",
+        postalCode: "",
+        direction: "",
         startDate: null,
         finishDate: null,
       },
     };
   },
   watch: {
-    "filter.startDate"() {
-      this.compareDates();
+    startDate() {
+      console.log("entra");
+      //hay que comparar las fechas primero
+      this.getEvents();
     },
-    "filter.finishDate"() {
-      this.compareDates();
-    }
+    startTime() {
+      //hay que comparar las fechas primero
+      this.getEvents();
+    },
   },
   computed: {
     filterApplied() {
-      const sportSelected = this.filter.sport.length > 0;
+      const sportSelected =
+        this.filter.sport !== null && this.filter.sport.length > 0;
       const countrySelected = this.filter.country.length > 0;
       const provinceSelected = this.filter.province.length > 0;
       const citySelected = this.filter.city.length > 0;
+      const directionSelected = this.filter.direction.length > 0;
       const startDateSelected = this.filter.startDate !== null;
       const finishDateSelected = this.filter.finishDate !== null;
       return (
@@ -182,6 +159,7 @@ export default {
         countrySelected ||
         provinceSelected ||
         citySelected ||
+        directionSelected ||
         startDateSelected ||
         finishDateSelected
       );
@@ -190,28 +168,14 @@ export default {
       const today = new Date();
       return `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
     },
-    getProvinces() {
-      return this.filter.country.length === 0
-        ? this.combo.province
-        : this.combo.province.filter(
-            (province) =>
-              this.filter.country.findIndex(
-                (country) => country === province.country.code
-              ) > -1
-          );
-    },
-    getCities() {
-      return this.filter.province.length === 0
-        ? this.combo.city
-        : this.combo.city.filter(
-            (city) =>
-              this.filter.province.findIndex(
-                (province) => province === city.province.code
-              ) > -1
-          );
-    },
+  },
+  created() {
+    this.getEvents();
   },
   methods: {
+    debounce: _.debounce(function () {
+      this.getEvents();
+    }, 200),
     saveStartDate(date) {
       this.$refs.menuStartDate.save(date);
       this.getEvents();
@@ -221,53 +185,33 @@ export default {
       this.getEvents();
     },
     compareDates() {
+      //TO DO
       if (moment(this.startDate) > moment(this.finishDate)) {
         this.finishDate = this.startDate;
-      }
-    },
-    countrySelected() {
-      if (this.filter.country.length > 0) {
-        this.filter.province = this.filter.province.filter((province) => {
-          const provinceObject = this.combo.province.find(
-            (fullProvince) => fullProvince.code === province
-          );
-          return (
-            this.filter.country.findIndex(
-              (country) => country === provinceObject.country.code
-            ) > -1
-          );
-        });
-      }
-      this.provinceSelected();
-    },
-    provinceSelected() {
-      console.log("entra1")
-      if (this.filter.province.length > 0) {
-        this.filter.city = this.filter.city.filter((city) => {
-          const cityObject = this.combo.city.find(
-            (fullCity) => fullCity.code === city
-          );
-          return (
-            this.filter.city.findIndex(
-              (city) => city === cityObject.province.code
-            ) > -1
-          );
-        });
       }
       this.getEvents();
     },
     getEvents() {
-      console.log("entra2")
+      if (this.startDate && this.startDate.length > 0) {
+        this.filter.startDate = `${this.startDate} ${
+          this.startTime && this.startTime.length > 0 ? this.startTime : "00:00:00"
+        }`;
+      }
+
       this.$emit("filter", this.filter);
     },
     toggleFilter() {
       this.showFilter = !this.showFilter;
     },
     emptyFilter() {
-      this.filter.sport = [];
-      this.filter.country = [];
-      this.filter.province = [];
-      this.filter.city = [];
+      this.startDate = "";
+      this.finishDate = "";
+      this.filter.sport = "";
+      this.filter.country = "";
+      this.filter.province = "";
+      this.filter.city = "";
+      this.filter.direction = "";
+      this.filter.postalCode = "";
       this.filter.startDate = null;
       this.filter.finishDate = null;
       this.getEvents();
@@ -278,23 +222,36 @@ export default {
 
 <style lang="scss" scoped>
 .event-filter {
-  min-height: 40px;
   width: 95%;
   background-color: white;
-}
+  min-height: 40px;
 
-.show-filter {
-  min-height: 50px;
-  transition: min-height 0.15s ease-out;
-  transform: scaleY(1);
-  transform-origin: top;
-  transition: transform 0.26s ease;
-}
-.hide-filter {
-  height: 0px;
-  transition: height 0.15s ease-out;
-  transform-origin: top;
-  transform: scaleY(0);
-  transition: transform 0.26s ease;
+  &--big {
+    min-height: 200px;
+    transition: min-height 0.1s ease;
+  }
+
+  &--small {
+    min-height: 40px;
+    transition: min-height 0.3s ease;
+  }
+
+  &__content {
+    &--show {
+      min-height: 50px;
+      transition: min-height 0.15s ease-out;
+      transform: scaleY(1);
+      transform-origin: top;
+      transition: transform 0.26s ease;
+    }
+
+    &--hide {
+      height: 0px;
+      transition: height 0.15s ease-out;
+      transform-origin: top;
+      transform: scaleY(0);
+      transition: transform 0.26s ease;
+    }
+  }
 }
 </style>

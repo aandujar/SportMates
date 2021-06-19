@@ -28,6 +28,7 @@ export default {
       if (this.$route.path === "/") {
         this.$router.push("/event");
       }
+      this.$store.dispatch("event/getSports");
     } else {
       this.$router.push("/");
     }

@@ -4,24 +4,34 @@
     <div class="main__content" @click="closeMenu">
       <router-view />
     </div>
+    <FloatingButton @clicked="toggleShowDialog" />
+    <DialogCreateEvent v-if="showDialog" @close="toggleShowDialog" />
   </div>
 </template>
 
 <script>
-import Toolbar from "@/layout/Toolbar";
+import Toolbar from "@/components/Toolbar";
+import FloatingButton from "@/components/FloatingButton";
+
 export default {
   name: "Main",
   data() {
     return {
       loading: true,
+      showDialog: false,
     };
   },
   components: {
     Toolbar,
+    FloatingButton,
+    DialogCreateEvent: () => import("@/components/DialogCreateEvent"),
   },
   methods: {
     closeMenu() {
       this.$refs.toolbar.closeMenu();
+    },
+    toggleShowDialog() {
+      this.showDialog = !this.showDialog;
     },
   },
 };

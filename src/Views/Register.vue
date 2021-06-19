@@ -1,11 +1,11 @@
 <template>
-  <div class="register center-items flex-column">
+  <div class="register center-items flex-column" @keyup.enter="createUser">
     <v-col cols="12" xs="12">
-      <h3 class="text text--big text--bold">Registro</h3>
+      <h3 class="text text--big text--bold">{{ $text.register }}</h3>
     </v-col>
     <v-col cols="12" sm="12" md="6">
       <v-text-field
-        label="Nombre"
+        :label="$text.name"
         v-model="newUser.name"
         counter="50"
         maxlength="50"
@@ -17,7 +17,7 @@
     </v-col>
     <v-col cols="12" sm="12" md="6">
       <v-text-field
-        label="Apellidos"
+        :label="$text.surnames"
         v-model="newUser.surnames"
         counter="50"
         maxlength="50"
@@ -29,7 +29,7 @@
     </v-col>
     <v-col cols="12" sm="12" md="6">
       <v-text-field
-        label="Email"
+        :label="$text.email"
         v-model="newUser.email"
         type="text"
         counter="50"
@@ -41,7 +41,7 @@
     </v-col>
     <v-col cols="12" sm="12" md="6">
       <v-text-field
-        label="Contraseña"
+        :label="$text.password"
         v-model="newUser.password"
         counter="50"
         maxlength="50"
@@ -55,7 +55,7 @@
     </v-col>
     <v-col cols="12" sm="12" md="6">
       <v-text-field
-        label="Repetir contraseña"
+        :label="$text.passwordRepeat"
         v-model="repeatPassword"
         counter="50"
         maxlength="50"
@@ -79,11 +79,12 @@
         <template v-slot:activator="{ on, attrs }">
           <v-text-field
             v-model="newUser.bornDate"
-            label="Fecha de nacimiento"
+            :label="$text.bornDate"
             prepend-icon="mdi-calendar"
             readonly
             v-bind="attrs"
             v-on="on"
+            :error-messages="bornDateErrors"
           ></v-text-field>
         </template>
         <v-date-picker
@@ -102,7 +103,7 @@
         @click="createUser"
         @keyup.enter="createUser"
       >
-        Registrarse
+       {{ $text.signIn }}
       </v-btn>
     </v-col>
     <transition name="slide-fade">
@@ -115,7 +116,7 @@
     </transition>
     <v-col cols="12" xs="12"
       ><div class="pointer-underlined" @click="$emit('change')">
-        ¿Ya estás registrado? Haz clic aquí
+       {{ $text.registerLoginMessage }}
       </div></v-col
     >
   </div>
@@ -178,7 +179,7 @@ export default {
           );
         },
       },
-      bornDate: { required, minLength: minLength(1), maxLength: maxLength(50) },
+      bornDate: { required },
     },
     repeatPassword: {
       sameAs: sameAs(function () {
@@ -201,54 +202,52 @@ export default {
     nameErrors() {
       const errors = [];
       if (this.$v.newUser.name.$dirty) {
-        !this.$v.newUser.name.maxLength && errors.push("Campo incorrecto");
-        !this.$v.newUser.name.minLength && errors.push("Campo incorrecto");
-        !this.$v.newUser.name.required && errors.push("Campo incorrecto");
+        !this.$v.newUser.name.maxLength && errors.push(this.$text.maximumSizeExceeded);
+        !this.$v.newUser.name.minLength && errors.push(this.$text.minimumSizeNotReached);
+        !this.$v.newUser.name.required && errors.push(this.$text.requiredField);
       }
       return errors;
     },
     surnamesErrors() {
       const errors = [];
       if (this.$v.newUser.surnames.$dirty) {
-        !this.$v.newUser.surnames.maxLength && errors.push("Campo incorrecto");
-        !this.$v.newUser.surnames.minLength && errors.push("Campo incorrecto");
-        !this.$v.newUser.surnames.required && errors.push("Campo incorrecto");
+        !this.$v.newUser.surnames.maxLength && errors.push(this.$text.maximumSizeExceeded);
+        !this.$v.newUser.surnames.minLength && errors.push(this.$text.minimumSizeNotReached);
+        !this.$v.newUser.surnames.required && errors.push(this.$text.requiredField);
       }
       return errors;
     },
     emailErrors() {
       const errors = [];
       if (this.$v.newUser.email.$dirty) {
-        !this.$v.newUser.email.maxLength && errors.push("Campo incorrecto");
-        !this.$v.newUser.email.minLength && errors.push("Campo incorrecto");
-        !this.$v.newUser.email.email && errors.push("Campo incorrecto");
-        !this.$v.newUser.email.required && errors.push("Campo incorrecto");
+        !this.$v.newUser.email.maxLength && errors.push(this.$text.maximumSizeExceeded);
+        !this.$v.newUser.email.minLength && errors.push(this.$text.minimumSizeNotReached);
+        !this.$v.newUser.email.email && errors.push(this.$text.invalidEmail);
+        !this.$v.newUser.email.required && errors.push(this.$text.requiredField);
       }
       return errors;
     },
     passwordErrors() {
       const errors = [];
       if (this.$v.newUser.password.$dirty) {
-        !this.$v.newUser.password.valid && errors.push("No valido");
-        !this.$v.newUser.password.maxLength && errors.push("Campo incorrecto");
-        !this.$v.newUser.password.minLength && errors.push("Campo incorrecto");
-        !this.$v.newUser.password.required && errors.push("Campo incorrecto");
+        !this.$v.newUser.password.valid && errors.push(this.$text.invalidPassword);
+        !this.$v.newUser.password.maxLength && errors.push(this.$text.maximumSizeExceeded);
+        !this.$v.newUser.password.minLength && errors.push(this.$text.minimumSizeNotReached);
+        !this.$v.newUser.password.required && errors.push(this.$text.requiredField);
       }
       return errors;
     },
     bornDateErrors() {
       const errors = [];
       if (this.$v.newUser.bornDate.$dirty) {
-        !this.$v.newUser.bornDate.maxLength && errors.push("Campo incorrecto");
-        !this.$v.newUser.bornDate.minLength && errors.push("Campo incorrecto");
-        !this.$v.newUser.bornDate.required && errors.push("Campo incorrecto");
+        !this.$v.newUser.bornDate.required && errors.push(this.$text.requiredField);
       }
       return errors;
     },
     repeatPasswordErrors() {
       const errors = [];
       if (this.$v.repeatPassword.$dirty) {
-        !this.$v.repeatPassword.sameAs && errors.push("Campo incorrecto");
+        !this.$v.repeatPassword.sameAs && errors.push(this.$text.passwordNotEquals);
       }
       return errors;
     },
@@ -259,11 +258,11 @@ export default {
         this.$store.dispatch("user/register", this.newUser)
         .then(() => this.$emit("logged") )
         .catch(() => {
-          this.errorMessage = "Ha ocurrido un error";
+          this.errorMessage = this.$text.errorOcurred;
           this.emptyErrorMessage();
         });
       } else {
-        this.errorMessage = "Datos incorrectos";
+        this.errorMessage = this.$text.invalidData;
         this.$v.$touch();
         this.emptyErrorMessage();
       }
