@@ -1,6 +1,6 @@
 <template>
-  <div class="inscripted-events">
-    <EventsView eventType="inscripted" />
+  <div class="owned-events">
+    <EventsView eventType="owned" />
   </div>
 </template>
 
@@ -8,9 +8,9 @@
 import EventsView from "@/components/EventsView";
 
 export default {
-  name: "InscriptedEvents",
+  name: "OwnedEvents",
   components: {
-    EventsView,
+    EventsView
   }
 };
 </script>

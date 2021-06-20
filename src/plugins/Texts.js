@@ -8,12 +8,18 @@ export default {
     city: "Ciudad",
     country: "País",
 
+    delete: "Eliminar",
     duration: "Duración",
 
     email: "Email",
     errorOcurred: "Ha ocurrido un error",
     eventCreated: "Evento creado correctamento",
+    eventDeletedCorrectly: "Evento eliminado correctamente",
     eventInscriptionCorrectly: "Te has inscrito al evento correctamente",
+    eventsToInscript: "Eventos para inscribirse",
+    eventsJustInscripted: "Eventos a los que te has inscrito",
+    eventsOwned: "Eventos creados por ti",
+    eventUnsuscriptionCorrectly: "Te has desinscrito del evento correctamente",
 
     finishDate: "Día de fin",
 
@@ -24,6 +30,7 @@ export default {
     inscriptions: "Inscripciones",
     invalidData: "Datos incorrectos",
     invalidEmail: "Email incorrecto",
+    invalidUbicaction: "Ubicación incorrecta. Por favor seleccione otra",
     invalidPassword: "La contraseña tiene que tener mayúsculas, minúsculas, números, caracteres especiales y tener entre 8 y 50 caracteres",
     invalidUserOrPassword: "Usuario o contraseña incorrectos",
 
@@ -44,6 +51,7 @@ export default {
 
     name: "Nombre",
     newEvent: "Nuevo evento",
+    noEventsToShow: "No hay eventos para mostrar",
     numberOfParticipants: "Número de participantes",
 
     observations: "Observaciones",

@@ -12,18 +12,18 @@ const routes = [
   {
     path: '/event',
     name: 'Main',
-    redirect: { name: 'AllEvents' },
+    redirect: { name: 'UnsubscriptedEvents' },
     component: () => import('@/Views/Main'),
     children: [
       {
-        path: 'all',
-        name: 'AllEvents',
-        component: () => import('@/Views/AllEvents')
+        path: 'unsubscripted',
+        name: 'UnsubscriptedEvents',
+        component: () => import('@/Views/UnsubscriptedEvents')
       },
       {
-        path: 'own',
-        name: 'OwnEvents',
-        component: () => import('@/Views/OwnEvents')
+        path: 'owned',
+        name: 'OwnedEvents',
+        component: () => import('@/Views/OwnedEvents')
       },
       {
         path: 'inscripted',

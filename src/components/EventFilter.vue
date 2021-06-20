@@ -6,25 +6,44 @@
       'event-filter--small': !showFilter,
     }"
   >
-    <div class="flex-row flex-row--wrapped flex-row--content-end w-100 mb-2">
-      <transition name="fade">
-        <v-icon
-          v-show="filterApplied"
-          medium
-          color="primary"
-          @click="emptyFilter"
-        >
-          mdi-close-circle
+    <div class="flex-row w-100">
+      <span>{{ eventTypeMessage }}</span>
+      <div class="align-right">
+        <transition name="fade">
+          <v-icon
+            v-show="filterApplied"
+            class="mx-1"
+            medium
+            color="primary"
+            @click="emptyFilter"
+          >
+            mdi-close-circle
+          </v-icon>
+        </transition>
+        <transition name="fade" mode="out-in">
+          <v-icon
+            v-if="showFilter"
+            class="mx-1"
+            medium
+            color="primary"
+            @click="toggleFilter"
+          >
+            mdi-filter-remove
+          </v-icon>
+          <v-icon
+            v-else
+            class="mx-1"
+            medium
+            color="primary"
+            @click="toggleFilter"
+          >
+            mdi-filter-plus
+          </v-icon>
+        </transition>
+        <v-icon class="mx-1" medium color="primary" @click="getEvents">
+          mdi-refresh
         </v-icon>
-      </transition>
-      <transition name="fade" mode="out-in">
-        <v-icon v-if="showFilter" medium color="primary" @click="toggleFilter">
-          mdi-filter-remove
-        </v-icon>
-        <v-icon v-else medium color="primary" @click="toggleFilter">
-          mdi-filter-plus
-        </v-icon>
-      </transition>
+      </div>
     </div>
     <div
       class="event-filter__content"
@@ -98,6 +117,20 @@
           :minTime="$getMinTime(startDate)"
           :disabled="startDate.length === 0"
         />
+        <!-- finish date -->
+        <DatePicker
+          ref="datePicker"
+          :minDate="$getCurrentDate()"
+          clearable
+          v-model="finishDate"
+        />
+        <!-- finish hour -->
+        <TimePicker
+          ref="timePicker"
+          v-model="finishTime"
+          :minTime="$getMinTime(finishDate)"
+          :disabled="finishDate.length === 0"
+        />
       </div>
     </div>
   </div>
@@ -108,6 +141,7 @@ import DatePicker from "@/components/DatePicker";
 import TimePicker from "@/components/TimePicker";
 import moment from "moment";
 import _ from "lodash";
+import routes from "@/router/routesInterface";
 
 export default {
   name: "EventFilter",
@@ -120,6 +154,8 @@ export default {
     return {
       startDate: "",
       startTime: "",
+      finishDate: "",
+      finishTime: "",
       showFilter: false,
       filter: {
         sport: "",
@@ -143,8 +179,35 @@ export default {
       //hay que comparar las fechas primero
       this.getEvents();
     },
+    finishDate() {
+      console.log("entra");
+      //hay que comparar las fechas primero
+      this.getEvents();
+    },
+    finishTime() {
+      //hay que comparar las fechas primero
+      this.getEvents();
+    },
   },
   computed: {
+    eventTypeMessage() {
+      let message;
+      switch (this.$route.path) {
+        case routes.unsubscripted:
+          message = this.$text.eventsToInscript;
+          break;
+        case routes.owned:
+          message = this.$text.eventsOwned;
+          break;
+        case routes.inscripted:
+          message = this.$text.eventsJustInscripted;
+          break;
+        default:
+          message = "";
+          break;
+      }
+      return message;
+    },
     filterApplied() {
       const sportSelected =
         this.filter.sport !== null && this.filter.sport.length > 0;
@@ -176,14 +239,6 @@ export default {
     debounce: _.debounce(function () {
       this.getEvents();
     }, 200),
-    saveStartDate(date) {
-      this.$refs.menuStartDate.save(date);
-      this.getEvents();
-    },
-    saveFinishDate(date) {
-      this.$refs.menuFinishDate.save(date);
-      this.getEvents();
-    },
     compareDates() {
       //TO DO
       if (moment(this.startDate) > moment(this.finishDate)) {
@@ -191,19 +246,28 @@ export default {
       }
       this.getEvents();
     },
-    getEvents() {
-      if (this.startDate && this.startDate.length > 0) {
-        this.filter.startDate = `${this.startDate} ${
-          this.startTime && this.startTime.length > 0 ? this.startTime : "00:00:00"
-        }`;
+    formatDate(type) {
+      const date = `${type}Date`;
+      const time = `${type}Time`;
+      if (this[date] && this[date].length > 0) {
+        const timeValue =
+          this[time] && this[time].length > 0 ? this[time] : "00:00:00";
+        this.filter[date] = `${this[date]} ${timeValue}`;
+      } else {
+        this.filter[date] = null;
       }
-
+    },
+    getEvents() {
+      this.formatDate("start");
+      this.formatDate("finish");
       this.$emit("filter", this.filter);
     },
     toggleFilter() {
       this.showFilter = !this.showFilter;
     },
     emptyFilter() {
+      this.startTime = "";
+      this.finishTime = "";
       this.startDate = "";
       this.finishDate = "";
       this.filter.sport = "";
@@ -214,6 +278,8 @@ export default {
       this.filter.postalCode = "";
       this.filter.startDate = null;
       this.filter.finishDate = null;
+      this.filter.startTime = null;
+      this.filter.finishTime = null;
       this.getEvents();
     },
   },
@@ -225,6 +291,7 @@ export default {
   width: 95%;
   background-color: white;
   min-height: 40px;
+  padding-left: 30%;
 
   &--big {
     min-height: 200px;

@@ -6,7 +6,7 @@
         :src="require('@/assets/no-data.svg')"
       ></v-img>
     </div>
-    No hay datos
+    {{ $text.noEventsToShow }}
   </div>
 </template>
 

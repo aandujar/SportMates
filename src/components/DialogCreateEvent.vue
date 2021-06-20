@@ -167,6 +167,9 @@ export default {
       duration: { required, minValue: minValue(1), maxValue: maxValue(12) },
     },
   },
+  created() {
+    this.eventModel.creator.id = this.getUserId;
+  },
   computed: {
     ...mapState(["event"]),
     ...mapGetters({ getUserId: "user/getUserId" }),
@@ -174,7 +177,7 @@ export default {
       let suffix = "";
       if (this.eventModel.duration.length > 0) {
         suffix =
-          this.eventModel.duration === 1 ? this.$text.hour : this.$text.hours;
+          this.eventModel.duration == 1 ? this.$text.hour : this.$text.hours;
       }
       return suffix.toLowerCase();
     },
@@ -256,30 +259,47 @@ export default {
       this.$refs.menuDate.save(date);
     },
     getPosition(position) {
-      this.eventModel.latitude = position.lat.toString();
-      this.eventModel.longitude = position.lng.toString();
+      const lat = position.lat.toString();
+      const lng = position.lng.toString();
       axios
         .get(
-          `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${this.eventModel.latitude}&lon=${this.eventModel.longitude}`
+          `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`
         )
         .then((response) => {
-          this.eventModel.province = response.data.address.state;
-          this.eventModel.country = response.data.address.country;
-
-          if (response.data.name) {
-            this.eventModel.direction = response.data.name;
-          }
-
-          if (response.data.address.postcode) {
-            this.eventModel.postalCode = response.data.address.postcode;
-          }
-
-          if (response.data.address.city) {
-            this.eventModel.city = response.data.address.city;
-          } else if (response.data.address.town) {
-            this.eventModel.city = response.data.address.town;
+          if (
+            response.data.error ||
+            !response.data.address.state ||
+            !response.data.address.country
+          ) {
+            this.eventModel.latitude = "";
+            this.eventModel.longitude = "";
+            this.eventModel.direction = "";
+            this.eventModel.city = "";
+            this.eventModel.province = "";
+            this.eventModel.country = "";
+            this.eventModel.postalCode = null,
+            this.$errorMessage(this.$text.invalidUbicaction);
           } else {
-            this.eventModel.city = response.data.address.village;
+            this.eventModel.latitude = lat;
+            this.eventModel.longitude = lng;
+            this.eventModel.province = response.data.address.state;
+            this.eventModel.country = response.data.address.country;
+
+            if (response.data.name) {
+              this.eventModel.direction = response.data.name;
+            }
+
+            if (response.data.address.postcode) {
+              this.eventModel.postalCode = response.data.address.postcode;
+            }
+
+            if (response.data.address.city) {
+              this.eventModel.city = response.data.address.city;
+            } else if (response.data.address.town) {
+              this.eventModel.city = response.data.address.town;
+            } else {
+              this.eventModel.city = response.data.address.village;
+            }
           }
         })
         .catch(() => this.$errorMessage(this.$text.errorOcurred));

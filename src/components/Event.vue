@@ -68,10 +68,10 @@
             </div></v-row
           >
           <!-- inscription -->
-          <v-row v-if="all" cols="5" xs="5" style="margin: 0px"
+          <v-row v-if="unsubscripted" cols="5" xs="5" style="margin: 0px"
             ><div
               class="flex-row flex-row--content-start mx-1"
-              @click="addToEvent"
+              @click="inscribe"
             >
               <v-icon medium color="primary"> mdi-plus-box-outline </v-icon>
               <div class="flex-row flex-row--wrapped pointer-underlined mx-1">
@@ -79,15 +79,27 @@
               </div>
             </div></v-row
           >
-          <!-- unsuscription -->
+          <!-- unsubscribe -->
           <v-row v-if="inscripted" cols="5" xs="5" style="margin: 0px"
             ><div
               class="flex-row flex-row--content-start mx-1"
-              @click="unsuscriptToEvent"
+              @click="unsubscribe"
             >
               <v-icon medium color="primary"> mdi-minus-box-outline </v-icon>
               <div class="flex-row flex-row--wrapped pointer-underlined mx-1">
                 {{ $text.unsubscribe }}
+              </div>
+            </div></v-row
+          >
+          <!-- delete -->
+          <v-row v-if="owned" cols="5" xs="5" style="margin: 0px"
+            ><div
+              class="flex-row flex-row--content-start mx-1"
+              @click="remove"
+            >
+              <v-icon medium color="primary"> mdi-delete-forever </v-icon>
+              <div class="flex-row flex-row--wrapped pointer-underlined mx-1">
+                {{ $text.delete }}
               </div>
             </div></v-row
           >
@@ -111,7 +123,7 @@ export default {
   props: {
     event: { type: Object, required: true },
     disabled: { type: Boolean, required: false, default: false },
-    all: { type: Boolean, required: false, default: false },
+    unsubscripted: { type: Boolean, required: false, default: false },
     inscripted: { type: Boolean, required: false, default: false },
     owned: { type: Boolean, required: false, default: false },
   },
@@ -162,16 +174,21 @@ export default {
     closeMap() {
       this.showMap = false;
     },
-    addToEvent() {
+    inscribe() {
       if (!this.disabled) {
-        this.$emit("suscript", this.event.id);
+        this.$emit("inscribe", this.event.id);
       }
     },
-    unsuscriptToEvent() {
+    unsubscribe() {
       if (!this.disabled) {
-        this.$emit("unsuscript", this.event.id);
+        this.$emit("unsubscribe", this.event.id);
       }
     },
+    remove(){
+      if (!this.disabled) {
+        this.$emit("remove", this.event.id);
+      }
+    }
   },
 };
 </script>

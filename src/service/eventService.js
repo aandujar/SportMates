@@ -1,33 +1,49 @@
 import connection from './connection';
 
-export function getEvents(data) {
+export function getUnsubscriptedEvents(data) {
     return connection.$axios({
-        url: '/event/all',
+        url: '/event/unsubscripted',
         method: 'POST',
         params: data.params,
         data: data.data
     })
 }
 
-export function getSuscriptedEvents(data) {
+export function getInscriptedEvents(data) {
     return connection.$axios({
-        url: '/event/suscripted',
+        url: '/event/inscripted',
         method: 'POST',
         params: data.params,
         data: data.data
     })
 }
 
-export function addUserToEvent(data) {
+export function getOwnedEvents(data) {
     return connection.$axios({
-        url: `/event/${data.eventId}/${data.userId}`,
+        url: '/event/owned',
+        method: 'POST',
+        params: data.params,
+        data: data.data
+    })
+}
+
+export function inscribeToEvent(data) {
+    return connection.$axios({
+        url: `/event/inscribe/${data.eventId}/${data.userId}`,
         method: 'POST'
     })
 }
 
-export function unsuscribeUserToEvent(data) {
+export function unsubscribeToEvent(data) {
     return connection.$axios({
-        url: `/event/unsuscribe/${data.eventId}/${data.userId}`,
+        url: `/event/unsubscribe/${data.eventId}/${data.userId}`,
+        method: 'DELETE'
+    })
+}
+
+export function removeEvent(data) {
+    return connection.$axios({
+        url: `/event/delete/${data.eventId}/${data.userId}`,
         method: 'DELETE'
     })
 }

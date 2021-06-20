@@ -18,8 +18,8 @@
           v-bind="attrs"
           v-on="on"
           :append-icon="clearable && formattedDate.length > 0 ? 'mdi-close' : ''"
-          @click:append="emptyDate"
           :error-messages="dateErrors"
+          @click:append="emptyDate"
           @input="$v.date.$touch()"
           @blur="$v.date.$touch()"
         ></v-text-field>

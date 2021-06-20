@@ -21,9 +21,9 @@
       }"
     >
       <div
-        v-if="!isInAllEventsPage"
+        v-if="!isInUnsubscriptedEventsPage"
         class="toolbar__menu__item pointer flex-row flex-row--aligned pa-2"
-        @click="goTo('all')"
+        @click="goTo(routes.unsubscripted)"
       >
         <v-icon class="mr-2" medium color="primary"
           >mdi-folder-open-outline</v-icon
@@ -32,7 +32,7 @@
       <div
         v-if="!isInInscriptedEventsPage"
         class="toolbar__menu__item pointer flex-row flex-row--aligned pa-2"
-        @click="goTo('inscripted')"
+        @click="goTo(routes.inscripted)"
       >
         <v-icon class="mr-2" medium color="primary"
           >mdi-folder-open-outline</v-icon
@@ -41,7 +41,7 @@
       <div
         v-if="!isInOwnEventsPage"
         class="toolbar__menu__item pointer flex-row flex-row--aligned pa-2"
-        @click="goTo('own')"
+        @click="goTo(routes.owned)"
       >
         <v-icon class="mr-2" medium color="primary"
           >mdi-folder-open-outline</v-icon
@@ -65,6 +65,8 @@
 </template>
 
 <script>
+import routes from "@/router/routesInterface";
+
 export default {
   name: "Toolbar",
   data: function () {
@@ -72,17 +74,18 @@ export default {
       showCardIcons: false,
       showMenu: false,
       menuOpened: false,
+      routes
     };
   },
   computed: {
-    isInAllEventsPage() {
-      return this.$route.path === "/event/all";
+    isInUnsubscriptedEventsPage() {
+      return this.$route.path === routes.unsubscripted;
     },
     isInOwnEventsPage() {
-      return this.$route.path === "/event/own";
+      return this.$route.path === routes.owned;
     },
     isInInscriptedEventsPage() {
-      return this.$route.path === "/event/inscripted";
+      return this.$route.path === routes.inscripted;
     },
   },
   methods: {
@@ -102,8 +105,8 @@ export default {
       localStorage.removeItem("user");
       this.$router.push("/");
     },
-    goTo(eventType) {
-      this.$router.push(`/event/${eventType}`);
+    goTo(eventRoute) {
+      this.$router.push(eventRoute);
     }
   },
 };

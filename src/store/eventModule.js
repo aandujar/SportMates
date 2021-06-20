@@ -3,17 +3,21 @@ import * as service from '@/service/eventService'
 export default {
     namespaced: true,
     state: {
-        events: [],
-        suscriptedEvents: [],
+        unsubscriptedEvents: [],
+        inscriptedEvents: [],
+        ownedEvents: [],
         sport: [],
         status: ''
     },
     mutations: {
-        SET_EVENTS: (state, events) => {
-            state.events = events;
+        SET_UNSUBSCRIPTED_EVENTS: (state, unsubscriptedEvents) => {
+            state.unsubscriptedEvents = unsubscriptedEvents;
         },
-        SET_SUSCRIPTED_EVENTS: (state, suscriptedEvents) => {
-            state.suscriptedEvents = suscriptedEvents;
+        SET_INSCRIPTED_EVENTS: (state, inscriptedEvents) => {
+            state.inscriptedEvents = inscriptedEvents;
+        },
+        SET_OWNED_EVENTS: (state, ownedEvents) => {
+            state.ownedEvents = ownedEvents;
         },
         SET_SPORTS: (state, sport) => {
             state.sport = sport;
@@ -30,13 +34,13 @@ export default {
     },
 
     actions: {
-        getEvents({ commit }, params ) {
+        getUnsubscriptedEvents({ commit }, params) {
             return new Promise((resolve, reject) => {
                 commit('STATUS_LOADING');
-                service.getEvents(params)
+                service.getUnsubscriptedEvents(params)
                     .then(function (response) {
                         commit('STATUS_CORRECT');
-                        commit('SET_EVENTS', response.status === 200 ? response.data.content : []);
+                        commit('SET_UNSUBSCRIPTED_EVENTS', response.status === 200 ? response.data.content : []);
                         resolve(response)
                     })
                     .catch(function (error) {
@@ -45,13 +49,13 @@ export default {
                     })
             })
         },
-        getSuscriptedEvents({ commit }, params ) {
+        getInscriptedEvents({ commit }, params) {
             return new Promise((resolve, reject) => {
                 commit('STATUS_LOADING');
-                service.getSuscriptedEvents(params)
+                service.getInscriptedEvents(params)
                     .then(function (response) {
                         commit('STATUS_CORRECT');
-                        commit('SET_SUSCRIPTED_EVENTS', response.status === 200 ? response.data.content : []);
+                        commit('SET_INSCRIPTED_EVENTS', response.status === 200 ? response.data.content : []);
                         resolve(response)
                     })
                     .catch(function (error) {
@@ -60,7 +64,22 @@ export default {
                     })
             })
         },
-        getSports({ commit } ) {
+        getOwnedEvents({ commit }, params) {
+            return new Promise((resolve, reject) => {
+                commit('STATUS_LOADING');
+                service.getOwnedEvents(params)
+                    .then(function (response) {
+                        commit('STATUS_CORRECT');
+                        commit('SET_OWNED_EVENTS', response.status === 200 ? response.data.content : []);
+                        resolve(response)
+                    })
+                    .catch(function (error) {
+                        commit('STATUS_ERROR');
+                        reject(error)
+                    })
+            })
+        },
+        getSports({ commit }) {
             return new Promise((resolve, reject) => {
                 service.getSports()
                     .then(function (response) {
@@ -72,10 +91,10 @@ export default {
                     })
             })
         },
-        addUserToEvent({ commit }, data ) {
+        inscribeToEvent({ commit }, data) {
             return new Promise((resolve, reject) => {
                 commit('STATUS_LOADING');
-                service.addUserToEvent(data)
+                service.inscribeToEvent(data)
                     .then(function () {
                         commit('STATUS_CORRECT');
                         resolve()
@@ -86,10 +105,10 @@ export default {
                     })
             })
         },
-        unsuscribeUserToEvent({ commit }, data ) {
+        unsubscribeToEvent({ commit }, data) {
             return new Promise((resolve, reject) => {
                 commit('STATUS_LOADING');
-                service.unsuscribeUserToEvent(data)
+                service.unsubscribeToEvent(data)
                     .then(function () {
                         commit('STATUS_CORRECT');
                         resolve()
@@ -100,7 +119,21 @@ export default {
                     })
             })
         },
-        createEvent({ commit }, data ) {
+        removeEvent({ commit }, data) {
+            return new Promise((resolve, reject) => {
+                commit('STATUS_LOADING');
+                service.removeEvent(data)
+                    .then(function () {
+                        commit('STATUS_CORRECT');
+                        resolve()
+                    })
+                    .catch(function (error) {
+                        commit('STATUS_ERROR');
+                        reject(error)
+                    })
+            })
+        },
+        createEvent({ commit }, data) {
             return new Promise((resolve, reject) => {
                 commit('STATUS_LOADING');
                 service.createEvent(data)
