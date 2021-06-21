@@ -62,3 +62,4 @@ export function getMinTime(date) {
   }
   return minTime;
 }
+

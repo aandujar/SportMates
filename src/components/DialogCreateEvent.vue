@@ -88,6 +88,7 @@
             required
             :minTime="$getMinTime(date)"
             v-model="time"
+            :label="$text.startDate"
           />
         </v-row>
         <v-row cols="12" xs="12">

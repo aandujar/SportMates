@@ -12,6 +12,7 @@ export default {
     duration: "Duración",
 
     email: "Email",
+    emailIsInUse: "El email está en uso",
     errorOcurred: "Ha ocurrido un error",
     eventCreated: "Evento creado correctamento",
     eventDeletedCorrectly: "Evento eliminado correctamente",
@@ -78,6 +79,8 @@ export default {
 
     unsubscribe: "Desinscribirse",
     user: "Usuario",
+    username: "Nombre de usuario",
+    usernameIsInUse: "El nombre de usuario está en uso",
 
     viewInMap: "Ver en mapa",
 

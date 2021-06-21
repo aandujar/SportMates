@@ -15,3 +15,11 @@ export function login(params) {
         params: params
     })
 }
+
+export function dataIsInUse(data) {
+    return connection.$axios({
+        url: `/user/${data.type}`,
+        method: 'GET',
+        params: data.params
+    })
+}

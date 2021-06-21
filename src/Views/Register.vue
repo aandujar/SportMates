@@ -35,8 +35,22 @@
         counter="50"
         maxlength="50"
         :error-messages="emailErrors"
+        v-on:input="debounce('email')"
         @input="$v.newUser.email.$touch()"
         @blur="$v.newUser.email.$touch()"
+      ></v-text-field>
+    </v-col>
+     <v-col cols="12" sm="12" md="6">
+      <v-text-field
+        :label="$text.username"
+        v-model="newUser.username"
+        type="text"
+        counter="30"
+        maxlength="30"
+        :error-messages="usernameErrors"
+        v-on:input="debounce('username')"
+        @input="$v.newUser.username.$touch()"
+        @blur="$v.newUser.username.$touch()"
       ></v-text-field>
     </v-col>
     <v-col cols="12" sm="12" md="6">
@@ -103,7 +117,7 @@
         @click="createUser"
         @keyup.enter="createUser"
       >
-       {{ $text.signIn }}
+        {{ $text.signIn }}
       </v-btn>
     </v-col>
     <transition name="slide-fade">
@@ -116,7 +130,7 @@
     </transition>
     <v-col cols="12" xs="12"
       ><div class="pointer-underlined" @click="$emit('change')">
-       {{ $text.registerLoginMessage }}
+        {{ $text.registerLoginMessage }}
       </div></v-col
     >
   </div>
@@ -124,6 +138,7 @@
 
 <script>
 import { mapState } from "vuex";
+import _ from "lodash";
 
 import {
   required,
@@ -143,10 +158,13 @@ export default {
       showPassword: false,
       showRepeatPassword: false,
       repeatPassword: "",
+      isEmailInUse: true,
+      isUsernameInUse: true,
       newUser: {
         name: "",
         surnames: "",
         email: "",
+        username: "",
         password: "",
         bornDate: "",
       },
@@ -161,6 +179,17 @@ export default {
         minLength: minLength(1),
         maxLength: maxLength(50),
         email,
+        isFree: function () {
+          return !this.isEmailInUse;
+        },
+      },
+      username: {
+        required,
+        minLength: minLength(1),
+        maxLength: maxLength(30),
+        isFree: function () {
+          return !this.isUsernameInUse;
+        },
       },
       password: {
         required,
@@ -202,8 +231,10 @@ export default {
     nameErrors() {
       const errors = [];
       if (this.$v.newUser.name.$dirty) {
-        !this.$v.newUser.name.maxLength && errors.push(this.$text.maximumSizeExceeded);
-        !this.$v.newUser.name.minLength && errors.push(this.$text.minimumSizeNotReached);
+        !this.$v.newUser.name.maxLength &&
+          errors.push(this.$text.maximumSizeExceeded);
+        !this.$v.newUser.name.minLength &&
+          errors.push(this.$text.minimumSizeNotReached);
         !this.$v.newUser.name.required && errors.push(this.$text.requiredField);
       }
       return errors;
@@ -211,56 +242,95 @@ export default {
     surnamesErrors() {
       const errors = [];
       if (this.$v.newUser.surnames.$dirty) {
-        !this.$v.newUser.surnames.maxLength && errors.push(this.$text.maximumSizeExceeded);
-        !this.$v.newUser.surnames.minLength && errors.push(this.$text.minimumSizeNotReached);
-        !this.$v.newUser.surnames.required && errors.push(this.$text.requiredField);
+        !this.$v.newUser.surnames.maxLength &&
+          errors.push(this.$text.maximumSizeExceeded);
+        !this.$v.newUser.surnames.minLength &&
+          errors.push(this.$text.minimumSizeNotReached);
+        !this.$v.newUser.surnames.required &&
+          errors.push(this.$text.requiredField);
       }
       return errors;
     },
     emailErrors() {
       const errors = [];
       if (this.$v.newUser.email.$dirty) {
-        !this.$v.newUser.email.maxLength && errors.push(this.$text.maximumSizeExceeded);
-        !this.$v.newUser.email.minLength && errors.push(this.$text.minimumSizeNotReached);
+        !this.$v.newUser.email.isFree && errors.push(this.$text.emailIsInUse);
+        !this.$v.newUser.email.maxLength &&
+          errors.push(this.$text.maximumSizeExceeded);
+        !this.$v.newUser.email.minLength &&
+          errors.push(this.$text.minimumSizeNotReached);
         !this.$v.newUser.email.email && errors.push(this.$text.invalidEmail);
-        !this.$v.newUser.email.required && errors.push(this.$text.requiredField);
+        !this.$v.newUser.email.required &&
+          errors.push(this.$text.requiredField);
+      }
+      return errors;
+    },
+    usernameErrors() {
+      const errors = [];
+      if (this.$v.newUser.username.$dirty) {
+        !this.$v.newUser.username.isFree && errors.push(this.$text.usernameIsInUse);
+        !this.$v.newUser.email.maxLength &&
+          errors.push(this.$text.maximumSizeExceeded);
+        !this.$v.newUser.email.minLength &&
+          errors.push(this.$text.minimumSizeNotReached);
+        !this.$v.newUser.email.email && errors.push(this.$text.invalidEmail);
       }
       return errors;
     },
     passwordErrors() {
       const errors = [];
       if (this.$v.newUser.password.$dirty) {
-        !this.$v.newUser.password.valid && errors.push(this.$text.invalidPassword);
-        !this.$v.newUser.password.maxLength && errors.push(this.$text.maximumSizeExceeded);
-        !this.$v.newUser.password.minLength && errors.push(this.$text.minimumSizeNotReached);
-        !this.$v.newUser.password.required && errors.push(this.$text.requiredField);
+        !this.$v.newUser.password.valid &&
+          errors.push(this.$text.invalidPassword);
+        !this.$v.newUser.password.maxLength &&
+          errors.push(this.$text.maximumSizeExceeded);
+        !this.$v.newUser.password.minLength &&
+          errors.push(this.$text.minimumSizeNotReached);
+        !this.$v.newUser.password.required &&
+          errors.push(this.$text.requiredField);
       }
       return errors;
     },
     bornDateErrors() {
       const errors = [];
       if (this.$v.newUser.bornDate.$dirty) {
-        !this.$v.newUser.bornDate.required && errors.push(this.$text.requiredField);
+        !this.$v.newUser.bornDate.required &&
+          errors.push(this.$text.requiredField);
       }
       return errors;
     },
     repeatPasswordErrors() {
       const errors = [];
       if (this.$v.repeatPassword.$dirty) {
-        !this.$v.repeatPassword.sameAs && errors.push(this.$text.passwordNotEquals);
+        !this.$v.repeatPassword.sameAs &&
+          errors.push(this.$text.passwordNotEquals);
       }
       return errors;
     },
   },
   methods: {
+    debounce: _.debounce(function (type) {
+      const isEmail = type === "email";
+      const params = {};
+      params[type] = isEmail ? this.newUser.email : this.newUser.username;
+      let data = { type: type, params };
+      this.$store
+        .dispatch("user/dataIsInUse", data)
+        .then((response) =>
+          isEmail
+            ? (this.isEmailInUse = response.data)
+            : (this.isUsernameInUse = response.data)
+        );
+    }, 200),
     createUser() {
       if (!this.$v.$invalid) {
-        this.$store.dispatch("user/register", this.newUser)
-        .then(() => this.$emit("logged") )
-        .catch(() => {
-          this.errorMessage = this.$text.errorOcurred;
-          this.emptyErrorMessage();
-        });
+        this.$store
+          .dispatch("user/register", this.newUser)
+          .then(() => this.$emit("logged"))
+          .catch(() => {
+            this.errorMessage = this.$text.errorOcurred;
+            this.emptyErrorMessage();
+          });
       } else {
         this.errorMessage = this.$text.invalidData;
         this.$v.$touch();

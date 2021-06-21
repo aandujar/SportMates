@@ -58,6 +58,20 @@ export default {
                     })
             })
         },
+        dataIsInUse({ commit }, data) {
+            return new Promise((resolve, reject) => {
+                commit('STATUS_LOADING');
+                service.dataIsInUse(data)
+                    .then(function (response) {
+                        commit('STATUS_CORRECT');
+                        resolve(response)
+                    })
+                    .catch(function (error) {
+                        commit('STATUS_ERROR');
+                        reject(error)
+                    })
+            })
+        }
     }
 
 }

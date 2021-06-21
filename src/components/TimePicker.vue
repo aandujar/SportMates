@@ -100,7 +100,7 @@ export default {
       return isHigher;
     },
     emitTime() {
-      this.$emit("input", `${this.time}:00`);
+      this.$emit("input", this.time.length > 0 ? `${this.time}:00` : "");
     },
   },
 };

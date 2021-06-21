@@ -12,12 +12,14 @@
       <template v-slot:activator="{ on, attrs }">
         <v-text-field
           :value="formattedDate"
-          :label="$text.startDate"
+          :label="label"
           prepend-icon="mdi-calendar"
           readonly
           v-bind="attrs"
           v-on="on"
-          :append-icon="clearable && formattedDate.length > 0 ? 'mdi-close' : ''"
+          :append-icon="
+            clearable && formattedDate.length > 0 ? 'mdi-close' : ''
+          "
           :error-messages="dateErrors"
           @click:append="emptyDate"
           @input="$v.date.$touch()"
@@ -35,6 +37,7 @@
 </template>
 
 <script>
+import moment from "moment";
 import { requiredIf } from "vuelidate/lib/validators";
 
 export default {
@@ -43,6 +46,7 @@ export default {
     minDate: { type: String, required: false },
     required: { type: Boolean, required: false },
     clearable: { type: Boolean, required: false, default: false },
+    label: { type: String, required: true },
   },
   data() {
     return {
@@ -59,6 +63,13 @@ export default {
     },
   },
   watch: {
+    minDate() {
+      if (this.date.length > 0 && this.minDate) {
+        if (moment(new Date(this.date) >= moment(new Date(this.minDate)))) {
+          this.emptyDate();
+        }
+      }
+    },
     date() {
       this.$emit("input", this.formattedDate);
     },

@@ -77,58 +77,58 @@
           class="mr-2"
           :label="$text.province"
           v-model="filter.province"
-          @input="debounce"
+          v-on:input="debounce"
         ></v-text-field>
         <!-- city -->
         <v-text-field
           class="mr-2"
           :label="$text.city"
           v-model="filter.city"
-          @input="debounce"
+          v-on:input="debounce"
         ></v-text-field>
         <!-- postalCode -->
         <v-text-field
           class="mr-2"
           :label="$text.postalCode"
           v-model="filter.postalCode"
-          @input="debounce"
+          v-on:input="debounce"
         ></v-text-field>
         <!-- direction -->
         <v-text-field
           class="mr-2"
           :label="$text.address"
           v-model="filter.direction"
-          @input="debounce"
+          v-on:input="debounce"
         ></v-text-field>
       </div>
       <!-- temporal data -->
       <div class="flex-row flex-row--wrapped">
         <!-- start date -->
         <DatePicker
-          ref="datePicker"
+          ref="startDatePicker"
           :minDate="$getCurrentDate()"
           clearable
           v-model="startDate"
+          :label="$text.startDate"
         />
         <!-- start hour -->
         <TimePicker
-          ref="timePicker"
           v-model="startTime"
           :minTime="$getMinTime(startDate)"
           :disabled="startDate.length === 0"
         />
         <!-- finish date -->
         <DatePicker
-          ref="datePicker"
-          :minDate="$getCurrentDate()"
+          ref="finishDatePicker"
+          :minDate="startDate ? reverseStartDate : $getCurrentDate()"
           clearable
           v-model="finishDate"
+          :label="$text.finishDate"
         />
         <!-- finish hour -->
         <TimePicker
-          ref="timePicker"
           v-model="finishTime"
-          :minTime="$getMinTime(finishDate)"
+          :minTime="getMinimumFinishTime"
           :disabled="finishDate.length === 0"
         />
       </div>
@@ -171,25 +171,48 @@ export default {
   },
   watch: {
     startDate() {
-      console.log("entra");
-      //hay que comparar las fechas primero
-      this.getEvents();
+      this.compareDates();
     },
     startTime() {
-      //hay que comparar las fechas primero
-      this.getEvents();
+      this.compareDates();
     },
     finishDate() {
-      console.log("entra");
-      //hay que comparar las fechas primero
-      this.getEvents();
+      this.compareDates();
     },
     finishTime() {
-      //hay que comparar las fechas primero
-      this.getEvents();
+      this.compareDates();
     },
   },
   computed: {
+    reverseStartDate() {
+      let date = "";
+      if (this.startDate.length > 0) {
+        const startDateSplitted = this.startDate.split("-");
+        date = `${startDateSplitted[2]}-${startDateSplitted[1]}-${startDateSplitted[0]}`;
+      }
+      return date;
+    },
+    reverseFinishDate() {
+      let date = "";
+      if (this.finishDate.length > 0) {
+        const finishDateSplitted = this.finishDate.split("-");
+        date = `${finishDateSplitted[2]}-${finishDateSplitted[1]}-${finishDateSplitted[0]}`;
+      }
+      return date;
+    },
+    getMinimumFinishTime() {
+      let time = null;
+      if (this.startDate === this.finishDate && this.startTime) {
+        time = this.startTime;
+      } else if (
+        this.startDate.length === 0 &&
+        this.reverseFinishDate === this.$getCurrentDate()
+      ) {
+        const now = moment();
+        time = `${now.hour()}:${now.minutes()}`;
+      }
+      return time;
+    },
     eventTypeMessage() {
       let message;
       switch (this.$route.path) {
@@ -240,9 +263,25 @@ export default {
       this.getEvents();
     }, 200),
     compareDates() {
-      //TO DO
-      if (moment(this.startDate) > moment(this.finishDate)) {
-        this.finishDate = this.startDate;
+      if (this.startDate.length > 0 && this.finishDate.length > 0) {
+        let fullStartDate = this.reverseStartDate;
+        fullStartDate += ` ${
+          this.startTime.length > 0 ? this.startTime : "00:00:00"
+        }`;
+
+        const finishDateSplitted = this.finishDate.split("-");
+        let fullFinishDate = `${finishDateSplitted[2]}-${finishDateSplitted[1]}-${finishDateSplitted[0]}`;
+        fullFinishDate += ` ${
+          this.finishTime.length > 0 ? this.finishTime : "00:00:00"
+        }`;
+
+        if (
+          moment(new Date(fullStartDate)) >= moment(new Date(fullFinishDate))
+        ) {
+          this.finishDate = "";
+          this.finishTime = "";
+          this.filter.finishDate = null;
+        }
       }
       this.getEvents();
     },
@@ -280,6 +319,8 @@ export default {
       this.filter.finishDate = null;
       this.filter.startTime = null;
       this.filter.finishTime = null;
+      this.$refs.startDatePicker.emptyDate();
+      this.$refs.finishDatePicker.emptyDate();
       this.getEvents();
     },
   },
