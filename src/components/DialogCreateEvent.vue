@@ -80,6 +80,7 @@
           <DatePicker
             ref="datePicker"
             required
+            :label="$text.startDate"
             :minDate="$getCurrentDate()"
             v-model="date"
           />

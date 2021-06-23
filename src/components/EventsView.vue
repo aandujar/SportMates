@@ -2,6 +2,13 @@
   <div class="events-view flex-column mt-2 pa-4">
     <!-- loading -->
     <DialogLoader v-if="isLoading" />
+    <!-- confirm action -->
+    <DialogConfirmEventAction
+      v-if="showConfirmDialog"
+      :message="getMessageConfirmDialog"
+      @cancel="toggleShowConfirmDialog"
+      @accept="callEventAction"
+    />
     <div class="flex-row flex-row--centered w-100">
       <EventFilter :sports="event.sport" @filter="getEvents" />
     </div>
@@ -18,9 +25,9 @@
         :unsubscripted="eventType === 'unsubscripted'"
         :inscripted="eventType === 'inscripted'"
         :owned="eventType === 'owned'"
-        @inscribe="inscribe"
-        @unsubscribe="unsubscribe"
-        @remove="remove"
+        @inscribe="toggleShowConfirmDialog"
+        @unsubscribe="toggleShowConfirmDialog"
+        @remove="toggleShowConfirmDialog"
       />
     </div>
     <!-- no events -->
@@ -46,6 +53,8 @@ export default {
     DialogLoader,
     NoData,
     Event: () => import("@/components/Event"),
+    DialogConfirmEventAction: () =>
+      import("@/components/DialogConfirmEventAction"),
   },
   props: { eventType: { type: String, required: true } },
   data() {
@@ -53,6 +62,8 @@ export default {
       page: 1,
       maxPages: null,
       filter: {},
+      showConfirmDialog: false,
+      eventSelected: null
     };
   },
   watch: {
@@ -63,6 +74,21 @@ export default {
   computed: {
     ...mapState(["event"]),
     ...mapGetters({ getUserId: "user/getUserId" }),
+    getMessageConfirmDialog() {
+      let message = "";
+      switch (this.eventType) {
+        case "owned":
+          message = this.$text.confirmDelete;
+          break;
+        case "inscripted":
+          message = this.$text.confirmUnsubscription;
+          break;
+        default:
+          message = this.$text.confirmSubscription;
+          break;
+      }
+      return message;
+    },
     getEventsToShow() {
       return this.event[`${this.eventType}Events`];
     },
@@ -82,6 +108,24 @@ export default {
     this.$store.commit(`event/SET_${this.eventType.toUpperCase()}_EVENTS`, []);
   },
   methods: {
+    toggleShowConfirmDialog(event) {
+      this.eventSelected = event;
+      this.showConfirmDialog = !this.showConfirmDialog;
+    },
+    callEventAction() {
+      switch (this.eventType) {
+        case "owned":
+          this.remove(this.eventSelected);
+          break;
+        case "inscripted":
+          this.unsubscribe(this.eventSelected);
+          break;
+        default:
+          this.inscribe(this.eventSelected);
+          break;
+      }
+      this.toggleShowConfirmDialog(null);
+    },
     showErrorMessage(error) {
       this.$errorMessage(
         error.response.data ? error.response.data : this.$text.errorOcurred

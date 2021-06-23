@@ -22,19 +22,23 @@ export default {
     };
   },
   created() {
-    const user = localStorage.getItem("user");
-    if (user) {
-      this.$store.commit("user/SET_USER", JSON.parse(user));
-      if (this.$route.path === "/") {
-        this.$router.push("/event");
+    this.$router.onReady(() => {
+      const user = localStorage.getItem("user");
+      if (user) {
+        this.$store.commit("user/SET_USER", JSON.parse(user));
+        if (this.$route.path === "/") {
+          this.$router.push("/event");
+        }
+        this.$store.dispatch("event/getSports");
+      } else {
+        if (this.$route.path !== "/") {
+          this.$router.push("/");
+        }
       }
-      this.$store.dispatch("event/getSports");
-    } else {
-      this.$router.push("/");
-    }
-    setTimeout(() => {
-      this.loading = false;
-    }, 350);
+      setTimeout(() => {
+        this.loading = false;
+      }, 350);
+    });
   },
 };
 </script>

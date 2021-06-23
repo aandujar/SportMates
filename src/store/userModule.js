@@ -9,11 +9,18 @@ export default {
     getters: {
         getUserId: state => {
             return state.user !== null ? state.user.id : null
-        }
+        },
+        getUserAvatar: state => {
+            return state.user !== null && state.user.avatar !== null ? state.user.avatar : require(`@/assets/avatar.png`)
+        },
     },
     mutations: {
         SET_USER: (state, user) => {
             state.user = user;
+        },
+        SET_AVATAR: (state, avatar) => {
+            state.user.avatar = avatar;
+            localStorage.setItem('user', JSON.stringify(state.user));
         },
         STATUS_LOADING: (state) => {
             state.status = "loading"
@@ -62,6 +69,34 @@ export default {
             return new Promise((resolve, reject) => {
                 commit('STATUS_LOADING');
                 service.dataIsInUse(data)
+                    .then(function (response) {
+                        commit('STATUS_CORRECT');
+                        resolve(response)
+                    })
+                    .catch(function (error) {
+                        commit('STATUS_ERROR');
+                        reject(error)
+                    })
+            })
+        },
+        updateAvatar({ commit }, data) {
+            return new Promise((resolve, reject) => {
+                commit('STATUS_LOADING');
+                service.updateAvatar(data)
+                    .then(function (response) {
+                        commit('STATUS_CORRECT');
+                        resolve(response)
+                    })
+                    .catch(function (error) {
+                        commit('STATUS_ERROR');
+                        reject(error)
+                    })
+            })
+        },
+        changePassword({ commit }, data) {
+            return new Promise((resolve, reject) => {
+                commit('STATUS_LOADING');
+                service.changePassword(data)
                     .then(function (response) {
                         commit('STATUS_CORRECT');
                         resolve(response)

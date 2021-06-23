@@ -10,7 +10,7 @@
       <v-img
         height="100%"
         width="100%"
-        :src="require(`@/assets/avatar.png`)"
+        :src="getUserAvatar"
       ></v-img>
     </div>
     <div
@@ -48,6 +48,7 @@
         >{{ $text.myEvents }}
       </div>
       <div
+      v-if="!isInProfilePage"
         class="toolbar__menu__item pointer flex-row flex-row--aligned pa-2"
         @click="goTo('profile')"
       >
@@ -66,6 +67,7 @@
 
 <script>
 import routes from "@/router/routesInterface";
+import { mapGetters } from "vuex";
 
 export default {
   name: "Toolbar",
@@ -78,6 +80,7 @@ export default {
     };
   },
   computed: {
+    ...mapGetters({ getUserAvatar: "user/getUserAvatar" }),
     isInUnsubscriptedEventsPage() {
       return this.$route.path === routes.unsubscripted;
     },
@@ -87,6 +90,9 @@ export default {
     isInInscriptedEventsPage() {
       return this.$route.path === routes.inscripted;
     },
+    isInProfilePage(){
+      return this.$route.path === routes.profile;
+    }
   },
   methods: {
     showIcons() {
@@ -129,6 +135,7 @@ export default {
     width: 40px;
     border-radius: 50%;
     background-color: white;
+    overflow: hidden;
   }
   
   @media (max-width: 600px) {
@@ -142,6 +149,7 @@ export default {
     width: 30px;
     border-radius: 50%;
     background-color: white;
+    overflow: hidden;
   }
 }
 

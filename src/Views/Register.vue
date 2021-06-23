@@ -40,7 +40,7 @@
         @blur="$v.newUser.email.$touch()"
       ></v-text-field>
     </v-col>
-     <v-col cols="12" sm="12" md="6">
+    <v-col cols="12" sm="12" md="6">
       <v-text-field
         :label="$text.username"
         v-model="newUser.username"
@@ -82,32 +82,13 @@
       ></v-text-field>
     </v-col>
     <v-col cols="12" sm="12" md="6">
-      <v-menu
-        ref="menu"
-        v-model="menu"
-        :close-on-content-click="false"
-        transition="scale-transition"
-        offset-y
-        min-width="auto"
-      >
-        <template v-slot:activator="{ on, attrs }">
-          <v-text-field
-            v-model="newUser.bornDate"
-            :label="$text.bornDate"
-            prepend-icon="mdi-calendar"
-            readonly
-            v-bind="attrs"
-            v-on="on"
-            :error-messages="bornDateErrors"
-          ></v-text-field>
-        </template>
-        <v-date-picker
-          v-model="newUser.bornDate"
-          :active-picker.sync="activePicker"
-          :max="getMinimumBornDate"
-          @change="save"
-        ></v-date-picker>
-      </v-menu>
+      <DatePicker
+        ref="datePicker"
+        required
+        :label="$text.bornDate"
+        :maxDate="getMinimumBornDate"
+        v-model="newUser.bornDate"
+      />
     </v-col>
     <v-col cols="12" sm="12" md="6">
       <v-btn
@@ -139,6 +120,7 @@
 <script>
 import { mapState } from "vuex";
 import _ from "lodash";
+import DatePicker from "@/components/DatePicker";
 
 import {
   required,
@@ -150,6 +132,9 @@ import {
 
 export default {
   name: "Register",
+  components: {
+    DatePicker,
+  },
   data: function () {
     return {
       menu: false,
@@ -195,17 +180,8 @@ export default {
         required,
         minLength: minLength(8),
         maxLength: maxLength(50),
-        valid: function (value) {
-          const containsUppercase = /[A-Z]/.test(value);
-          const containsLowercase = /[a-z]/.test(value);
-          const containsNumber = /[0-9]/.test(value);
-          const containsSpecial = /[#?!@$%^&*-]/.test(value);
-          return (
-            containsUppercase &&
-            containsLowercase &&
-            containsNumber &&
-            containsSpecial
-          );
+        valid: function () {
+          return this.$isPasswordValid(this.newUser.password);
         },
       },
       bornDate: { required },
@@ -268,7 +244,8 @@ export default {
     usernameErrors() {
       const errors = [];
       if (this.$v.newUser.username.$dirty) {
-        !this.$v.newUser.username.isFree && errors.push(this.$text.usernameIsInUse);
+        !this.$v.newUser.username.isFree &&
+          errors.push(this.$text.usernameIsInUse);
         !this.$v.newUser.email.maxLength &&
           errors.push(this.$text.maximumSizeExceeded);
         !this.$v.newUser.email.minLength &&
@@ -327,13 +304,14 @@ export default {
         this.$store
           .dispatch("user/register", this.newUser)
           .then(() => this.$emit("logged"))
-          .catch(() => {
-            this.errorMessage = this.$text.errorOcurred;
+          .catch((error) => {
+            this.errorMessage = error.response.data ? error.response.data : this.$text.errorOcurred;
             this.emptyErrorMessage();
           });
       } else {
         this.errorMessage = this.$text.invalidData;
         this.$v.$touch();
+        this.$refs.datePicker.$v.$touch();
         this.emptyErrorMessage();
       }
     },

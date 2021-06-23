@@ -23,3 +23,19 @@ export function dataIsInUse(data) {
         params: data.params
     })
 }
+
+export function updateAvatar(data) {
+    return connection.$axios({
+        url: `/user/avatar/${data.userId}`,
+        method: 'PUT',
+        data: data.avatar
+    })
+}
+
+export function changePassword(data) {
+    return connection.$axios({
+        url: `/user/password/${data.userId}`,
+        method: 'PUT',
+        data: data.password
+    })
+}

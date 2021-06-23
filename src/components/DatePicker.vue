@@ -30,6 +30,7 @@
         v-model="date"
         :active-picker.sync="datePicker"
         :min="minDate"
+        :max="maxDate"
         @input="menu = false"
       ></v-date-picker>
     </v-menu>
@@ -44,6 +45,7 @@ export default {
   name: "DatePicker",
   props: {
     minDate: { type: String, required: false },
+    maxDate: { type: String, required: false },
     required: { type: Boolean, required: false },
     clearable: { type: Boolean, required: false, default: false },
     label: { type: String, required: true },

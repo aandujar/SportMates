@@ -63,3 +63,18 @@ export function getMinTime(date) {
   return minTime;
 }
 
+export function isPasswordValid(password) {
+  const containsUppercase = /[A-Z]/.test(password);
+  const containsLowercase = /[a-z]/.test(password);
+  const containsNumber = /[0-9]/.test(password);
+  const containsSpecial = /[#?!@$%^&*-]/.test(password);
+  return (
+    containsUppercase &&
+    containsLowercase &&
+    containsNumber &&
+    containsSpecial
+  );
+}
+
+
+

@@ -3,7 +3,7 @@ import App from './App.vue'
 import router from './router/index'
 import store from './store'
 import vuetify from '@/plugins/vuetify'
-import { infoMessage, errorMessage, formatEventUbication, getCurrentDate, getMinTime } from '@/plugins/NotificationMessages'
+import { infoMessage, errorMessage, formatEventUbication, getCurrentDate, getMinTime, isPasswordValid } from '@/plugins/GlobalFunctions'
 import Text from '@/plugins/Texts';
 import Vuelidate from 'vuelidate'
 import Notifications from 'vue-notification';
@@ -16,11 +16,13 @@ Vue.prototype.$errorMessage = errorMessage;
 Vue.prototype.$formatEventUbication = formatEventUbication;
 Vue.prototype.$getCurrentDate = getCurrentDate;
 Vue.prototype.$getMinTime = getMinTime;
+Vue.prototype.$isPasswordValid = isPasswordValid;
 Vue.prototype.$text = Text;
 
 Vue.use(Vuelidate)
 
 Vue.config.productionTip = false
+
 new Vue({
   router,
   store,

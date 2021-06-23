@@ -22,7 +22,7 @@ const routes = [
       },
       {
         path: 'owned',
-        name: 'OwnedEvents',
+        name: 'Owned',
         component: () => import('@/Views/OwnedEvents')
       },
       {
@@ -33,7 +33,7 @@ const routes = [
       {
         path: 'profile',
         name: 'Profile',
-        component: () => import('@/Views/Profile')
+        component: () => import(/* webpackChunkName: "Profile" */'@/Views/Profile')
       },
     ]
   },
@@ -49,10 +49,9 @@ const routes = [
   //}
 ]
 
-const router = new VueRouter({
- // mode: 'history',
+export default new VueRouter({
+  mode: 'history',
   base: process.env.BASE_URL,
   routes
 })
 
-export default router

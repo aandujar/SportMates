@@ -1,12 +1,22 @@
 export default {
+    accept: "Aceptar",
     access: "Acceder",
     address: "Dirección",
-    
+    addNewProfileImage: "Añada aquí su nueva imagen de perfil y clique en cambiar imagen",
+    avatar: "Avatar",
+    avatarChangedCorrectly: "Avatar modificado correctamente",
 
     bornDate: "Fecha de nacimiento",
 
+    cancel: "Cancelar",
     city: "Ciudad",
+    changeAvatar: "Cambiar avatar",
+    changePassword: "Cambiar contraseña",
+    confirmDelete: "¿Estás seguro de que deseas eliminar el evento?",
+    confirmSubscription: "¿Estás seguro de que deseas inscribirte al evento?",
+    confirmUnsubscription: "¿Estás seguro de que deseas desinscribirte del evento?",
     country: "País",
+    currentPassword: "Contraseña actual",
 
     delete: "Eliminar",
     duration: "Duración",
@@ -33,6 +43,7 @@ export default {
     invalidEmail: "Email incorrecto",
     invalidUbicaction: "Ubicación incorrecta. Por favor seleccione otra",
     invalidPassword: "La contraseña tiene que tener mayúsculas, minúsculas, números, caracteres especiales y tener entre 8 y 50 caracteres",
+    invalidPasswords: "Contraseñas incorrectas",
     invalidUserOrPassword: "Usuario o contraseña incorrectos",
 
     login: "Login",
@@ -45,6 +56,7 @@ export default {
     minimumSizeNotReached: "Tamaño mínimo no alcanzado",
     minValue1: "El valor mínimo es 1",
     minValue2: "El valor mínimo es 2",
+    mustAddImage: "Debes añadir una imagen",
     mustEnterAllFields: "Debes rellenar todos los campos",
     mustEnterUserAndPassword: "Debes introducir usuario y contraseña",
     mustSelectUbicationInMap: "Debes seleccionar la ubicación en el mapa",
@@ -56,16 +68,22 @@ export default {
     numberOfParticipants: "Número de participantes",
 
     observations: "Observaciones",
+    onlyCanAddOneImage: "Solo puedes añadir una imagen",
+
+    newPassword: "Nueva contraseña",
 
     password: "Contraseña",
+    passwordChangedCorrectly: "Contraseña cambiada correctamente",
     passwordNotEquals: "Las contraseñas no coinciden",
     passwordRepeat: "Repetir contraseña",
+    personalData: "Datos personales",
     postalCode: "Código postal",
     profile: "Perfil",
     province: "Provincia",
 
     register: "Registro",
     registerLoginMessage: "¿Ya estás registrado? Haz clic aquí",
+    repeatNewPassword: "Repita la nueva contraseña",
     requiredField: "Campo obligatorio",
 
     startDate: "Día de inicio",
