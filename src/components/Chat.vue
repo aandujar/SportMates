@@ -30,7 +30,39 @@
             <div>{{ item.user.username }}</div>
             <div>{{ formatDate(item.date) }}</div>
           </div>
-          {{ item.message }}
+          <div class="break-word">{{ item.message }}</div>
+          <div
+            v-if="item.user.id === getUserId"
+            class="flex-row flex-row--content-end w-100"
+          >
+            <v-icon
+              small
+              color="primary"
+              class="pointer"
+              @click="editMessage(item)"
+              v-show="newMessage.id !== item.id"
+            >
+              mdi-pencil
+            </v-icon>
+            <v-icon
+              small
+              color="error"
+              class="pointer"
+              @click="deleteMessage(item.id)"
+              v-show="newMessage.id !== item.id"
+            >
+              mdi-delete
+            </v-icon>
+            <v-icon
+              small
+              color="primary"
+              class="pointer"
+              @click="cancelEditMessage"
+              v-show="newMessage.id === item.id"
+            >
+              mdi-cancel
+            </v-icon>
+          </div>
         </div>
       </div>
       <div class="chat__publish pa-1">
@@ -70,6 +102,7 @@ export default {
         user: null,
         event: null,
         date: "",
+        id: null,
       },
     };
   },
@@ -108,6 +141,15 @@ export default {
     this.goToBottomOfMessages();
   },
   methods: {
+    editMessage(message) {
+      this.newMessage.id = message.id;
+      this.newMessage.message = message.message;
+    },
+    cancelEditMessage() {
+      this.newMessage.id = null;
+      this.newMessage.message = "";
+      this.$v.$reset();
+    },
     close() {
       this.$emit("close");
     },
@@ -115,11 +157,31 @@ export default {
       const messagesDiv = document.getElementById("messages");
       messagesDiv.scrollTop = messagesDiv.scrollHeight;
     },
+    deleteMessage(messageId) {
+      const data = { messageId: messageId, userId: this.getUserId };
+      this.$store
+        .dispatch("chat/deleteMessage", data)
+        .then(() => this.searchMessages())
+        .catch((err) => {
+          this.$errorMessage(
+            err.response && err.response.data
+              ? err.response.data
+              : this.$text.errorOcurred
+          );
+        });
+    },
     minimize() {
       this.$emit("minimize");
     },
     addMessage() {
       this.$v.$touch();
+      if (this.newMessage.id) {
+        this.updateMessage();
+      } else {
+        this.saveMessage();
+      }
+    },
+    saveMessage() {
       if (!this.$v.$invalid) {
         this.$store
           .dispatch("chat/addMessage", this.newMessage)
@@ -137,13 +199,36 @@ export default {
           });
       }
     },
-    searchMessages() {
+    updateMessage() {
+      if (!this.$v.$invalid) {
+        this.$store
+          .dispatch("chat/updateMessage", this.newMessage)
+          .then(() => {
+            this.newMessage.message = "";
+            this.newMessage.id = null;
+            this.$v.$reset();
+            this.searchMessages(false);
+          })
+          .catch((err) => {
+            this.$errorMessage(
+              err.response && err.response.data
+                ? err.response.data
+                : this.$text.errorOcurred
+            );
+          });
+      }
+    },
+    searchMessages(goBottom = true) {
       this.$store
         .dispatch("chat/getMessagesByEvent", {
           userId: this.getUserId,
           eventId: this.event.id,
         })
-        .then(() => this.goToBottomOfMessages());
+        .then(() => {
+          if (goBottom) {
+            this.goToBottomOfMessages();
+          }
+        });
     },
     formatDate(date) {
       console.log("------");

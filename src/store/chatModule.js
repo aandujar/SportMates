@@ -59,6 +59,34 @@ export default {
                         reject(error)
                     })
             })
+        },
+        updateMessage({ commit }, data) {
+            return new Promise((resolve, reject) => {
+                commit('STATUS_LOADING');
+                service.updateMessage(data)
+                    .then(function (response) {
+                        commit('STATUS_CORRECT');
+                        resolve(response)
+                    })
+                    .catch(function (error) {
+                        commit('STATUS_ERROR');
+                        reject(error)
+                    })
+            })
+        },
+        deleteMessage({ commit }, data) {
+            return new Promise((resolve, reject) => {
+                commit('STATUS_LOADING');
+                service.deleteMessage(data)
+                    .then(function (response) {
+                        commit('STATUS_CORRECT');
+                        resolve(response)
+                    })
+                    .catch(function (error) {
+                        commit('STATUS_ERROR');
+                        reject(error)
+                    })
+            })
         }
     }
 
