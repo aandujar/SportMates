@@ -7,6 +7,12 @@
     <ChatsContainer />
     <FloatingButton @clicked="toggleShowDialog" />
     <DialogCreateEvent v-if="showDialog" @close="toggleShowDialog" />
+    <Chat
+      v-if="event !== null"
+      :event="event"
+      @close="closeChat"
+      @minimize="minimizeChat"
+    />
   </div>
 </template>
 
@@ -15,12 +21,15 @@ import Toolbar from "@/components/Toolbar";
 import FloatingButton from "@/components/FloatingButton";
 import ChatsContainer from "@/components/ChatsContainer";
 
+import { EventBus } from "@/plugins/EventBus";
+
 export default {
   name: "Main",
   data() {
     return {
       loading: true,
       showDialog: false,
+      event: null,
     };
   },
   components: {
@@ -28,6 +37,12 @@ export default {
     FloatingButton,
     ChatsContainer,
     DialogCreateEvent: () => import("@/components/DialogCreateEvent"),
+    Chat: () => import("@/components/Chat"),
+  },
+  created() {
+    EventBus.$on("showChat", (event) => {
+      this.event = event;
+    });
   },
   methods: {
     closeMenu() {
@@ -35,6 +50,14 @@ export default {
     },
     toggleShowDialog() {
       this.showDialog = !this.showDialog;
+    },
+    minimizeChat() {
+      EventBus.$emit("addEvent", this.event);
+      this.event = null;
+    },
+    closeChat() {
+      EventBus.$emit("closeEvent", this.event);
+      this.event = null;
     },
   },
 };

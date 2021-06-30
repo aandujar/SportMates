@@ -72,7 +72,7 @@
         <v-row cols="4" xs="4" style="margin: 0px" v-if="inscripted || owned"
           ><div
             class="flex-row flex-row--content-start mx-1"
-            @click="toggleChat"
+            @click="showChat"
           >
             <v-icon medium color="primary"> mdi-chat-outline </v-icon>
             <div class="flex-row flex-row--wrapped pointer-underlined mx-1">
@@ -131,12 +131,6 @@
       :longitude="event.longitude"
       @close="closeMap"
     />
-    <Chat
-      v-if="showChat"
-      :event="event"
-      @close="closeChat"
-      @minimize="minimize"
-    />
   </div>
 </template>
 
@@ -146,8 +140,7 @@ import { EventBus } from "@/plugins/EventBus";
 export default {
   name: "Event",
   components: {
-    Map: () => import("@/components/Map"),
-    Chat: () => import("@/components/Chat"),
+    Map: () => import("@/components/Map")
   },
   props: {
     event: { type: Object, required: true },
@@ -158,8 +151,7 @@ export default {
   },
   data() {
     return {
-      showMap: false,
-      showChat: false,
+      showMap: false
     };
   },
   computed: {
@@ -192,13 +184,6 @@ export default {
       return image;
     },
   },
-  created() {
-    EventBus.$on("showChat", (event) => {
-      if (this.event.id === event.id) {
-        this.toggleChat();
-      }
-    });
-  },
   methods: {
     showMapEvent() {
       if (!this.disabled) {
@@ -208,8 +193,8 @@ export default {
     closeMap() {
       this.showMap = false;
     },
-    toggleChat() {
-      this.showChat = !this.showChat;
+    showChat() {
+      EventBus.$emit("showChat", this.event);
     },
     inscribe() {
       if (!this.disabled) {
@@ -226,15 +211,7 @@ export default {
         this.$emit("remove", this.event.id);
       }
     },
-    minimize() {
-      EventBus.$emit("addEvent", this.event);
-      this.toggleChat();
-    },
-    closeChat(){
-       EventBus.$emit("closeEvent", this.event);
-       this.toggleChat();
-    }
-  },
+  }
 };
 </script>
 
@@ -279,10 +256,6 @@ export default {
       height: 15%;
       width: 100%;
     }
-
-    /*&__buttons {
-      margin-top: auto;
-    }*/
   }
 }
 </style>

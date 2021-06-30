@@ -8,7 +8,6 @@ export default {
     },
     mutations: {
         SET_CHATS: (state, data) => {
-            console.log(data)
             const index = state.chats.findIndex((chat) => chat.eventId === data.eventId);
             console.log(index)
             if (index > -1) {

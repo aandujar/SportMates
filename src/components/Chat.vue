@@ -155,7 +155,9 @@ export default {
     },
     goToBottomOfMessages() {
       const messagesDiv = document.getElementById("messages");
-      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      if (messagesDiv) {
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      }
     },
     deleteMessage(messageId) {
       const data = { messageId: messageId, userId: this.getUserId };

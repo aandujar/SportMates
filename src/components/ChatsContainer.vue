@@ -33,9 +33,7 @@ export default {
     });
 
     EventBus.$on("closeEvent", (event) => {
-      console.log(event);
       const eventIndex = this.getEventIndex(event);
-      console.log(eventIndex);
       if (eventIndex > -1) {
         this.events.splice(eventIndex, 1);
       }
