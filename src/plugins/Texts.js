@@ -12,6 +12,7 @@ export default {
     city: "Ciudad",
     changeAvatar: "Cambiar avatar",
     changePassword: "Cambiar contraseña",
+    chat: "Chat",
     confirmDelete: "¿Estás seguro de que deseas eliminar el evento?",
     confirmSubscription: "¿Estás seguro de que deseas inscribirte al evento?",
     confirmUnsubscription: "¿Estás seguro de que deseas desinscribirte del evento?",
@@ -71,6 +72,7 @@ export default {
     onlyCanAddOneImage: "Solo puedes añadir una imagen",
 
     newPassword: "Nueva contraseña",
+    noMessages: "No hay ningún mensaje",
 
     password: "Contraseña",
     passwordChangedCorrectly: "Contraseña cambiada correctamente",
@@ -95,6 +97,7 @@ export default {
     subscribe: "Inscribirse",
     surnames: "Apellidos",
 
+    ubication: "Ubicación",
     unsubscribe: "Desinscribirse",
     user: "Usuario",
     username: "Nombre de usuario",
@@ -102,7 +105,8 @@ export default {
 
     viewInMap: "Ver en mapa",
 
-    waitAMoment: "Espere un momento..."
+    waitAMoment: "Espere un momento...",
+    writeMessage: "Escribir un mensaje"
     
     
     

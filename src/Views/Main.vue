@@ -4,6 +4,7 @@
     <div class="main__content" @click="closeMenu">
       <router-view />
     </div>
+    <ChatsContainer />
     <FloatingButton @clicked="toggleShowDialog" />
     <DialogCreateEvent v-if="showDialog" @close="toggleShowDialog" />
   </div>
@@ -12,6 +13,7 @@
 <script>
 import Toolbar from "@/components/Toolbar";
 import FloatingButton from "@/components/FloatingButton";
+import ChatsContainer from "@/components/ChatsContainer";
 
 export default {
   name: "Main",
@@ -24,6 +26,7 @@ export default {
   components: {
     Toolbar,
     FloatingButton,
+    ChatsContainer,
     DialogCreateEvent: () => import("@/components/DialogCreateEvent"),
   },
   methods: {

@@ -27,83 +27,101 @@
             <v-icon class="mr-1" medium color="primary">
               mdi-map-marker-outline
             </v-icon>
-            <div class="flex-row flex-row--wrapped break-word">{{ $formatEventUbication(event) }}</div>
+            <div class="flex-row flex-row--wrapped break-word">
+              {{ $formatEventUbication(event) }}
+            </div>
           </div></v-row
         >
         <v-row cols="12" xs="12"
-          ><div class="flex-row flex-row--content-start flex-row--aligned break-word mb-1">
+          ><div
+            class="
+              flex-row flex-row--content-start flex-row--aligned
+              break-word
+              mb-1
+            "
+          >
             <v-icon class="mr-1" medium color="primary">
               mdi-information-outline
             </v-icon>
-            <div class="flex-row flex-row--wrapped">{{ getObservations }}</div>
+            <div class="flex-row flex-row--wrapped">
+              {{ getObservations }}
+            </div>
           </div></v-row
         >
         <v-row cols="12" xs="12"
           ><div class="flex-row flex-row--wrapped flex-row--aligned">
             <v-icon medium color="primary"> mdi-account </v-icon>
             <div>
-              {{ event.currentParticipants }} / {{ event.numberOfParticipants }}
+              {{ event.currentParticipants }} /
+              {{ event.numberOfParticipants }}
             </div>
           </div></v-row
         >
-        <div
-          class="
-            flex-row flex-row--aligned flex-row--space-between
-            event__buttons
-            w-100
-            mt-2
-            pt-4
-          "
+      </div>
+      <div
+        class="
+          event__data__actions
+          flex-row flex-row--aligned flex-row--space-between
+          event__buttons
+          w-100
+          mt-2
+          pt-4
+        "
+      >
+        <!-- chat -->
+        <v-row cols="4" xs="4" style="margin: 0px" v-if="inscripted || owned"
+          ><div
+            class="flex-row flex-row--content-start mx-1"
+            @click="toggleChat"
+          >
+            <v-icon medium color="primary"> mdi-chat-outline </v-icon>
+            <div class="flex-row flex-row--wrapped pointer-underlined mx-1">
+              {{ $text.chat }}
+            </div>
+          </div></v-row
         >
-          <!-- mapa -->
-          <v-row cols="5" xs="5" style="margin: 0px"
-            ><div
-              class="flex-row flex-row--content-start mx-1"
-              @click="showMapEvent"
-            >
-              <v-icon medium color="primary"> mdi-map-search-outline </v-icon>
-              <div class="flex-row flex-row--wrapped pointer-underlined mx-1">
-                {{ $text.viewInMap }}
-              </div>
-            </div></v-row
+        <!-- map -->
+        <v-row cols="4" xs="4" style="margin: 0px"
+          ><div
+            class="flex-row flex-row--content-start mx-1"
+            @click="showMapEvent"
           >
-          <!-- inscription -->
-          <v-row v-if="unsubscripted" cols="5" xs="5" style="margin: 0px"
-            ><div
-              class="flex-row flex-row--content-start mx-1"
-              @click="inscribe"
-            >
-              <v-icon medium color="primary"> mdi-plus-box-outline </v-icon>
-              <div class="flex-row flex-row--wrapped pointer-underlined mx-1">
-                {{ $text.subscribe }}
-              </div>
-            </div></v-row
+            <v-icon medium color="primary"> mdi-map-search-outline </v-icon>
+            <div class="flex-row flex-row--wrapped pointer-underlined mx-1">
+              {{ $text.ubication }}
+            </div>
+          </div></v-row
+        >
+        <!-- inscription -->
+        <v-row v-if="unsubscripted" cols="4" xs="4" style="margin: 0px"
+          ><div class="flex-row flex-row--content-start mx-1" @click="inscribe">
+            <v-icon medium color="primary"> mdi-plus-box-outline </v-icon>
+            <div class="flex-row flex-row--wrapped pointer-underlined mx-1">
+              {{ $text.subscribe }}
+            </div>
+          </div></v-row
+        >
+        <!-- unsubscribe -->
+        <v-row v-if="inscripted" cols="4" xs="4" style="margin: 0px"
+          ><div
+            class="flex-row flex-row--content-start mx-1"
+            @click="unsubscribe"
           >
-          <!-- unsubscribe -->
-          <v-row v-if="inscripted" cols="5" xs="5" style="margin: 0px"
-            ><div
-              class="flex-row flex-row--content-start mx-1"
-              @click="unsubscribe"
-            >
-              <v-icon medium color="primary"> mdi-minus-box-outline </v-icon>
-              <div class="flex-row flex-row--wrapped pointer-underlined mx-1">
-                {{ $text.unsubscribe }}
-              </div>
-            </div></v-row
-          >
-          <!-- delete -->
-          <v-row v-if="owned" cols="5" xs="5" style="margin: 0px"
-            ><div
-              class="flex-row flex-row--content-start mx-1"
-              @click="remove"
-            >
-              <v-icon medium color="primary"> mdi-delete-forever </v-icon>
-              <div class="flex-row flex-row--wrapped pointer-underlined mx-1">
-                {{ $text.delete }}
-              </div>
-            </div></v-row
-          >
-        </div>
+            <v-icon medium color="primary"> mdi-minus-box-outline </v-icon>
+            <div class="flex-row flex-row--wrapped pointer-underlined mx-1">
+              {{ $text.unsubscribe }}
+            </div>
+          </div></v-row
+        >
+        <!-- delete -->
+        <v-row v-if="owned" cols="4" xs="4" style="margin: 0px"
+          ><div class="flex-row flex-row--content-start mx-1" @click="remove">
+            <v-icon medium color="primary"> mdi-delete-forever </v-icon>
+            <div class="flex-row flex-row--wrapped pointer-underlined mx-1">
+              {{ $text.delete }}
+            </div>
+          </div></v-row
+        >
       </div>
     </div>
     <Map
@@ -113,13 +131,24 @@
       :longitude="event.longitude"
       @close="closeMap"
     />
+    <Chat
+      v-if="showChat"
+      :event="event"
+      @close="closeChat"
+      @minimize="minimize"
+    />
   </div>
 </template>
 
 <script>
+import { EventBus } from "@/plugins/EventBus";
 
 export default {
   name: "Event",
+  components: {
+    Map: () => import("@/components/Map"),
+    Chat: () => import("@/components/Chat"),
+  },
   props: {
     event: { type: Object, required: true },
     disabled: { type: Boolean, required: false, default: false },
@@ -130,10 +159,8 @@ export default {
   data() {
     return {
       showMap: false,
+      showChat: false,
     };
-  },
-  components: {
-    Map: () => import("@/components/Map"),
   },
   computed: {
     getObservations() {
@@ -165,6 +192,13 @@ export default {
       return image;
     },
   },
+  created() {
+    EventBus.$on("showChat", (event) => {
+      if (this.event.id === event.id) {
+        this.toggleChat();
+      }
+    });
+  },
   methods: {
     showMapEvent() {
       if (!this.disabled) {
@@ -173,6 +207,9 @@ export default {
     },
     closeMap() {
       this.showMap = false;
+    },
+    toggleChat() {
+      this.showChat = !this.showChat;
     },
     inscribe() {
       if (!this.disabled) {
@@ -184,10 +221,18 @@ export default {
         this.$emit("unsubscribe", this.event.id);
       }
     },
-    remove(){
+    remove() {
       if (!this.disabled) {
         this.$emit("remove", this.event.id);
       }
+    },
+    minimize() {
+      EventBus.$emit("addEvent", this.event);
+      this.toggleChat();
+    },
+    closeChat(){
+       EventBus.$emit("closeEvent", this.event);
+       this.toggleChat();
     }
   },
 };
@@ -198,6 +243,7 @@ export default {
   height: 390px;
   width: 330px;
   background-color: white;
+  position: relative;
 
   @media (max-width: 330px) {
     height: 460px;
@@ -220,18 +266,23 @@ export default {
     width: 100%;
 
     &__image {
-      height: 35%;
+      height: 30%;
       width: 100%;
     }
 
     &__content {
-      height: 65%;
+      height: 55%;
       width: 100%;
     }
 
-    &__buttons {
-      margin-top: auto;
+    &__actions {
+      height: 15%;
+      width: 100%;
     }
+
+    /*&__buttons {
+      margin-top: auto;
+    }*/
   }
 }
 </style>

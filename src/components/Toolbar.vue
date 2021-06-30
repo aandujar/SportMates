@@ -7,11 +7,7 @@
       <v-img class="toolbar__logo" :src="require(`@/assets/logo.png`)"></v-img>
     </div>
     <div class="toolbar__image pointer" v-on:click.stop="toggleMenu">
-      <v-img
-        height="100%"
-        width="100%"
-        :src="getUserAvatar"
-      ></v-img>
+      <v-img height="100%" width="100%" :src="getUserAvatar"></v-img>
     </div>
     <div
       class="toolbar__menu flex-column"
@@ -48,11 +44,12 @@
         >{{ $text.myEvents }}
       </div>
       <div
-      v-if="!isInProfilePage"
+        v-if="!isInProfilePage"
         class="toolbar__menu__item pointer flex-row flex-row--aligned pa-2"
         @click="goTo('profile')"
       >
-        <v-icon class="mr-2" medium color="primary"> mdi-account </v-icon>{{ $text.profile }}
+        <v-icon class="mr-2" medium color="primary"> mdi-account </v-icon
+        >{{ $text.profile }}
       </div>
       <div
         class="toolbar__menu__item pointer flex-row flex-row--aligned pa-2"
@@ -76,7 +73,7 @@ export default {
       showCardIcons: false,
       showMenu: false,
       menuOpened: false,
-      routes
+      routes,
     };
   },
   computed: {
@@ -90,9 +87,9 @@ export default {
     isInInscriptedEventsPage() {
       return this.$route.path === routes.inscripted;
     },
-    isInProfilePage(){
+    isInProfilePage() {
       return this.$route.path === routes.profile;
-    }
+    },
   },
   methods: {
     showIcons() {
@@ -113,7 +110,7 @@ export default {
     },
     goTo(eventRoute) {
       this.$router.push(eventRoute);
-    }
+    },
   },
 };
 </script>
@@ -125,7 +122,7 @@ export default {
   height: 70px;
   z-index: 90;
 
- &__logo {
+  &__logo {
     height: 200px;
     width: 400px;
   }
@@ -137,21 +134,21 @@ export default {
     background-color: white;
     overflow: hidden;
   }
-  
-  @media (max-width: 600px) {
-   &__logo {
-    height: 200px;
-    width: 200px;
-  }
 
-  &__image {
-    height: 30px;
-    width: 30px;
-    border-radius: 50%;
-    background-color: white;
-    overflow: hidden;
+  @media (max-width: 600px) {
+    &__logo {
+      height: 200px;
+      width: 200px;
+    }
+
+    &__image {
+      height: 30px;
+      width: 30px;
+      border-radius: 50%;
+      background-color: white;
+      overflow: hidden;
+    }
   }
-}
 
   &__menu {
     width: 200px;

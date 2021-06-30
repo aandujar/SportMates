@@ -1,4 +1,4 @@
-import connection from './connection';
+import connection from './connectionApi';
 
 export function register(user) {
     return connection.$axios({
